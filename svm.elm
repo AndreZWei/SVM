@@ -390,7 +390,7 @@ update msg model =
         
         RAM numbers ->
             let 
-                data = List.map (Result.withDefault 0) (List.map String.toInt (String.words numbers))
+                data = List.map (Result.withDefault 0) (List.map String.toInt (separate numbers))
                 newImage = {text = model.image.text, data = data}
             in 
                 {model | image = newImage}
@@ -403,26 +403,40 @@ update msg model =
 
 view: Model -> Html Msg
 view model =
-    div []
-      [ div [] [ Html.text "RAM data", input [onInput RAM] []]
-      , div [] [ Html.text "Instruction", textarea [onInput Instructions] []]
-      --, button [ onClick Instructions ] [ Html.text "Save code"]
-      , button [ onClick Run, disabled model.finished ] [ Html.text "Run" ]
-      , button [ onClick Step, disabled model.finished ] [ Html.text "Step"]
-      , button [ onClick Reset, disabled (model == init)] [ Html.text "Reset"]  
-      , div [] [ textarea [disabled True] [Html.text model.errorMsg]]
-      , div [] [ Html.text "registers", 
-                ul [class "registers"] 
-                [ li [] [Html.text (toString model.registers.r0)]
-                , li [] [Html.text (toString model.registers.r1)]
-                , li [] [Html.text (toString model.registers.r2)]
-                , li [] [Html.text (toString model.registers.r3)]
-                , li [] [Html.text (toString model.pc)]
-                , li [] [Html.text (toString model.ra)]
-                , li [] [Html.text (toString model.psw)]
-                ]
-               ]
+    section [ class "Page"]
+      [ h1 [ class "middle" ] [Html.text "Simple Virtual Machine"] 
+      , div [ class "left" ]
+        [ div [ class "text"] [Html.text "RAM Data"]
+        , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM] []]
+        , br [] []
+        , div [ class "text"] [Html.text "Instructions"]
+        , div [] [  textarea [onInput Instructions] []]
+        --, button [ onClick Instructions ] [ Html.text "Save code"]
+        , div [ class "button_list"]
+            [ button [ onClick Run, disabled model.finished ] [ Html.text "Run" ]
+            , button [ onClick Step, disabled model.finished ] [ Html.text "Step"]
+            , button [ onClick Reset, disabled (model == init)] [ Html.text "Reset"]  
+            ]
+        , div [] [ Html.text "System Message"]
+        , div [] [ textarea [disabled True] [Html.text model.errorMsg]]
+        ]
+      
+      , div [ class "right" ]
+        [  div [] [ Html.text "Registers", 
+                    ul [class "registers"] 
+                    [ li [] [Html.text "R0 = ", Html.text (toString model.registers.r0)]
+                    , li [] [Html.text (toString model.registers.r1)]
+                    , li [] [Html.text (toString model.registers.r2)]
+                    , li [] [Html.text (toString model.registers.r3)]
+                    , li [] [Html.text (toString model.pc)]
+                    , li [] [Html.text (toString model.ra)]
+                    , li [] [Html.text (toString model.psw)]
+                    ]
+                 ]
+        ]
       ]
+      
+
 
 
 
