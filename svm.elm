@@ -14,11 +14,6 @@ import String
 -- Main program implementing an svm
 
 
-
-
-
-
-
 type alias Registers = {r0: Int, r1: Int, r2: Int, r3: Int}
 
 string_of_regs: Registers -> String
@@ -34,24 +29,25 @@ string_of_regs r =
 -- Names for the registers
 type Reg = R0 | R1 | R2 | R3 | Zero
 
-string_of_reg: Reg -> String
+string_of_reg: Maybe Reg -> String
 string_of_reg r = 
     case r of 
-        R0 -> "R0"
-        R1 -> "R1"
-        R2 -> "R2"
-        R3 -> "R3"
-        Zero -> "Zero"
+        Just R0 -> "R0"
+        Just R1 -> "R1"
+        Just R2 -> "R2"
+        Just R3 -> "R3"
+        Just Zero -> "Zero"
+        Nothing -> "Invalid Register Name"
 
-reg_of_string: String -> Reg
+reg_of_string: String -> Maybe Reg
 reg_of_string s = 
     case s of 
-        "R0" -> R0
-        "R1" -> R1
-        "R2" -> R2
-        "R3" -> R3
-        "Zero" -> Zero 
-        _ -> Debug.crash "Not a valid register name" 
+        "R0" -> Just R0
+        "R1" -> Just R1
+        "R2" -> Just R2
+        "R3" -> Just R3
+        "Zero" -> Just Zero 
+        _ -> Nothing
 
 registerGet: Reg -> Registers -> Int
 registerGet register r =
@@ -71,64 +67,65 @@ registerPut value dest r =
         R3 -> {r | r3 = value}
         Zero -> Debug.log "Can't write in Zero Register" r
 
+ 
 type Instruction = 
-      Lod {rd: Reg, offset: Int, rs: Reg}   --  Let base be the contents of register Rs, loads RAM[base + offset] into register Rd.
-    | Li {rd: Reg, number: Int}             --  Loads number into register Rd
-    | Sto {rs: Reg, offset: Int, rd: Reg}   --  Let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory
-    | Mov {rd: Reg, rs: Reg}                --  Copies the content of register Rs into the register Rd
-    | Add {rd: Reg, rs: Reg, rt: Reg}       --  Adds the contents of registers Rs and Rt and stores the sum in register Rd
-    | Sub {rd: Reg, rs: Reg, rt: Reg}       --  Subtracts the contents of register Rt from Rs and stores the difference in register Rd
-    | Mul {rd: Reg, rs: Reg, rt: Reg}       --  Multiplies the contents of registers Rs and Rt and stores the sum in register Rd
-    | Div {rd: Reg, rs: Reg, rt: Reg}       --  Divides the contents of register Rt from Rs and stores the difference in register Rd
-    | Cmp {rs: Reg, rt: Reg}                --  Sets pwc = Rs - Rt
-    | Jsr Int                               --  Sets RA = PC and then PC = PC + disp
-    | R                                     --  Sets PC = RA
-    | Blt Int                               --  If PSW is negative, PC = PC + disp
-    | Beq Int                               --  If PSW == 0, PC = PC + disp
-    | Bgt Int                               --  If PSW is positive, PC = PC + disp
-    | Jmp Int                               --  PC = PC + disp
-    | Hlt                                   --  Print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
+      Lod {rd: Maybe Reg, offset: Maybe Int, rs: Maybe Reg}   --  Let base be the contents of register Rs, loads RAM[base + offset] into register Rd.
+    | Li {rd: Maybe Reg, number: Maybe Int}                   --  Loads number into register Rd
+    | Sto {rs: Maybe Reg, offset: Maybe Int, rd: Maybe Reg}   --  Let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory
+    | Mov {rd: Maybe Reg, rs: Maybe Reg}                      --  Copies the content of register Rs into the register Rd
+    | Add {rd: Maybe Reg, rs: Maybe Reg, rt: Maybe Reg}       --  Adds the contents of registers Rs and Rt and stores the sum in register Rd
+    | Sub {rd: Maybe Reg, rs: Maybe Reg, rt: Maybe Reg}       --  Subtracts the contents of register Rt from Rs and stores the difference in register Rd
+    | Mul {rd: Maybe Reg, rs: Maybe Reg, rt: Maybe Reg}       --  Multiplies the contents of registers Rs and Rt and stores the sum in register Rd
+    | Div {rd: Maybe Reg, rs: Maybe Reg, rt: Maybe Reg}       --  Divides the contents of register Rt from Rs and stores the difference in register Rd
+    | Cmp {rs: Maybe Reg, rt: Maybe Reg}                      --  Sets pwc = Rs - Rt
+    | Jsr (Maybe Int)                                           --  Sets RA = PC and then PC = PC + disp
+    | R                                                       --  Sets PC = RA
+    | Blt (Maybe Int)                                           --  If PSW is negative, PC = PC + disp
+    | Beq (Maybe Int)                                           --  If PSW == 0, PC = PC + disp
+    | Bgt (Maybe Int)                                           --  If PSW is positive, PC = PC + disp
+    | Jmp (Maybe Int)                                           --  PC = PC + disp
+    | Hlt                                                     --  Print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
+
+
+string_of_int: Maybe Int -> String
+string_of_int n = 
+    case n of 
+        Just n -> "n"
+        Nothing -> "Not a number"
 
 
 string_of_instruction: Instruction -> String
 string_of_instruction i = 
-    let si = toString in 
+    let si = string_of_int in 
     let sr = string_of_reg in 
     case i of 
          Lod {rd, offset, rs} -> "Lod\t" ++ (sr rd) ++ ", " ++ (si offset) ++ "(" ++ (sr rs) ++ ")"
          Li  {rd, number} -> "Li\t" ++ (sr rd) ++ ", " ++ (si number)
          Sto {rs, offset, rd} -> "Sto\t" ++ (sr rs) ++ ", " ++ (si offset) ++ "(" ++ (sr rd) ++ ")"
-         Mov {rd, rs} -> "Mov\t" ++ (sr rd) ++ ", " ++ (sr rs)
-         Add {rd, rs, rt} -> "Add\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
-         Sub {rd, rs, rt} -> "Sub\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
-         Mul {rd, rs, rt} -> "Mul\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
-         Div {rd, rs, rt} -> "Div\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
-         Cmp {rs, rt} -> "Cmp\t" ++ (sr rs) ++ ", " ++ (sr rt)
-         Blt disp -> "Blt\t" ++ (si disp)
-         Beq disp -> "Beq\t" ++ (si disp)
-         Bgt disp -> "Bgt\t" ++ (si disp)
-         Jmp disp -> "Jmp\t" ++ (si disp)
-         Jsr disp -> "Jsr\t" ++ (si disp)
+         Mov { rd,  rs} -> "Mov\t" ++ (sr rd) ++ ", " ++ (sr rs)
+         Add { rd,  rs,  rt} -> "Add\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
+         Sub { rd,  rs,  rt} -> "Sub\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
+         Mul { rd,  rs,  rt} -> "Mul\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
+         Div { rd,  rs,  rt} -> "Div\t" ++ (sr rd) ++ ", " ++ (sr rs) ++ ", " ++ (sr rt)
+         Cmp { rs,  rt} -> "Cmp\t" ++ (sr rs) ++ ", " ++ (sr rt)
+         Blt  disp -> "Blt\t" ++ (si disp)
+         Beq  disp -> "Beq\t" ++ (si disp)
+         Bgt  disp -> "Bgt\t" ++ (si disp)
+         Jmp  disp -> "Jmp\t" ++ (si disp)
+         Jsr  disp -> "Jsr\t" ++ (si disp)
          R -> "R"
          Hlt -> "Hlt"
 
 type alias Datasegment = List Int
-type alias Textsegment = List Instruction
+type alias Textsegment = List (Maybe Instruction)
 
 type alias Image = {data: Datasegment, text: Textsegment}
 
-
-firstElement: List a -> a  --A helper function for ramGet
-firstElement list = 
-    case list of 
-        [] -> Debug.crash "Index Out of Bound"
-        x::xs -> x
-
-ramGet: Int -> List a -> a
+ramGet: Int -> List a -> Maybe a
 ramGet n segment = 
     case n of
-        0 -> firstElement segment 
-        _ -> firstElement (List.drop n segment)
+        0 -> List.head segment 
+        _ -> List.head (List.drop n segment)
 
 
 ramPut: a -> Int -> List a -> List a
@@ -140,11 +137,6 @@ ramPut v n segment =
 
 
 -- Debugging Support
-debug: Bool 
-debug = True
-
-step: Bool
-step = True
 
 printState: Int -> Int -> Int -> Registers -> ()
 printState pc psw ra registers =
@@ -153,175 +145,17 @@ printState pc psw ra registers =
     in 
     Debug.log ("\n dbg: (pc, psw, ra) = (" ++ si pc ++ "," ++ si psw ++ "," ++ si ra ++ ")\n" ++ "dbg: regs =" ++ regstr) ()
 
-read_line: () -> ()
-read_line () = ()
-
-dbgOut: Int -> Int -> Int -> Registers -> ()
-dbgOut pc psw ra registers =
-    case (debug, step) of 
-        (True, True) -> let () = 
-                            printState pc psw ra registers
-                        in 
-                            read_line()
-        (True, False) -> printState pc psw ra registers
-        _ -> ()
-
-{- An implementation of the Simple Virtual Machine. A call (svm ram pc)
-   executes the SVM program starting with instruction in the text segment
-   of image at pc.
--}
-
-{- The CPU Instruction Cycle
-
-cycle: Int -> Int -> Int -> Registers -> Image -> ()
-cycle pc psw ra registers img = 
-    let instruction = ramGet pc img.text
-        newpc = pc + 1
-        () = dbgOut pc psw ra registers
-    in 
-    case instruction of
-        Lod {rd, offset, rs} ->
-            let 
-                addr = offset + (registerGet rs registers)
-                value = ramGet addr img.data
-                newRegisters = registerPut value rd registers
-            in 
-                cycle newpc psw ra newRegisters img
-        
-        Li {rd, number} ->
-            let 
-                newRegisters = registerPut number rd registers
-            in 
-                cycle newpc psw ra newRegisters img
-        
-        Sto {rs, offset, rd} ->
-            let 
-                addr = offset + (registerGet rs registers)
-                value = registerGet rs registers
-                newData = ramPut value addr img.data
-                newImage = {text = img.text, data = newData}
-            in 
-                cycle newpc psw ra registers newImage
-
-        Mov {rd, rs} -> 
-            let 
-                v = registerGet rs registers 
-                newRegisters = registerPut v rd registers
-            in 
-                cycle newpc psw ra newRegisters img
-
-        Add {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 + v2) rd registers 
-            in
-                cycle newpc psw ra newRegisters img
-
-        Sub {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 - v2) rd registers 
-            in
-                cycle newpc psw ra newRegisters img
-
-        Mul {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 * v2) rd registers 
-            in
-                cycle newpc psw ra newRegisters img  
-
-        Div {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 // v2) rd registers 
-            in
-                cycle newpc psw ra newRegisters img    
-
-        Cmp {rs, rt} ->
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                value = v1 - v2
-            in 
-                cycle newpc value ra registers img
-
-        Blt disp ->
-            case psw < 0 of 
-                True -> cycle (newpc + disp) psw ra registers img
-                False -> cycle newpc psw ra registers img
-
-        Beq disp ->
-            case psw == 0 of 
-                True -> cycle (newpc + disp) psw ra registers img
-                False -> cycle newpc psw ra registers img
-
-        Bgt disp ->
-            case psw > 0 of 
-                True -> cycle (newpc + disp) psw ra registers img
-                False -> cycle newpc psw ra registers img
-
-        Jmp disp -> cycle (newpc + disp) psw ra registers img
-
-        Jsr disp -> cycle (newpc + disp) psw newpc registers img
-
-        R -> cycle ra psw ra registers img
-
-        Hlt -> 
-            let 
-                () = (Debug.log "\nSVM Halt" (), printState pc psw ra registers)
-            in 
-                ()
-
-
-svm: Image -> Int -> ()
-svm img pc = 
-    let 
-        initialPSW = 0
-        initialRA = 0
-        initialRegisters = {r0 = 0, r1 = 0, r2 = 0, r3 = 0 }
-    in 
-        cycle pc initialPSW initialRA initialRegisters img-}
-
--- An example of a virtual machine program that counts the data
-
-
- 
-data = 
-    [2, 2, 2, 2, 4, 5, 6, 7, -1]
-
-
-text =
-    [
-        Mov {rd=R0, rs=Zero},             -- R0 is the counter 
-        Mov {rd=R1, rs=R0},               -- R1 is the address of a number 
-        Li  {rd=R2, number=1},            -- R2 is for incrementing 
-        Lod {rd=R3, offset=0, rs=R1},     -- R3 is the number in the data 
-        Cmp {rs=R3, rt=Zero},            
-        Blt 3,
-        Add {rd=R1, rs=R1, rt=R2},
-        Add {rd=R0, rs=R0, rt=R2},
-        Jmp (-6),
-        Hlt
-    ]  
- 
-image = 
-    {data=data, text=text}
 
 
 main = beginnerProgram {model = model, update = update, view = view }
 
 --Model 
 
-type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, ptInstruction: String}
+type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String}
 
 model: Model
 model =
-    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, ptInstruction = ""}
+    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = ""}
 
 
 --Update
@@ -335,192 +169,199 @@ type Msg =
 
 --A helper function for processing instructions
 
-processCode: List String -> Instruction
+processCode: List String -> Maybe Instruction
 processCode s = 
     case s of 
-        ["LOD",rd,offset,rs] -> Lod {rd = reg_of_string rd, offset = Result.withDefault 0 (String.toInt offset), rs = reg_of_string rs}
-        ["LI",rd,number] -> Li {rd = reg_of_string rd, number = Result.withDefault 0 (String.toInt number)}
-        ["STO",rs,offset,rd] -> Sto {rs = reg_of_string rs, offset = Result.withDefault 0 (String.toInt offset), rd = reg_of_string rd}
-        ["MOV",rd,rs] -> Mov {rd = reg_of_string rd, rs = reg_of_string rs}
-        ["ADD",rd,rs,rt] -> Add {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt}
-        ["SUB",rd,rs,rt] -> Sub {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt}
-        ["MUL",rd,rs,rt] -> Mul {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt}
-        ["DIV",rd,rs,rt] -> Div {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt}
-        ["CMP",rs,rt] -> Cmp {rs = reg_of_string rs, rt = reg_of_string rt}
-        ["BLT",disp] -> Blt (Result.withDefault 0 (String.toInt disp))
-        ["BEQ",disp] -> Beq (Result.withDefault 0 (String.toInt disp))      
-        ["BGT",disp] -> Bgt (Result.withDefault 0 (String.toInt disp))
-        ["JMP",disp] -> Jmp (Result.withDefault 0 (String.toInt disp))
-        ["JSR",disp] -> Jsr (Result.withDefault 0 (String.toInt disp))
-        ["R"] -> R
-        ["HLT"] -> Hlt
-        _ -> Debug.crash "Invalid instruction"
+        ["LOD",rd,offset,rs] -> Just (Lod {rd = reg_of_string rd, offset = Result.toMaybe (String.toInt offset), rs = reg_of_string rs})
+        ["LI",rd,number] -> Just (Li {rd = reg_of_string rd, number = Result.toMaybe (String.toInt number)})
+        ["STO",rs,offset,rd] -> Just (Sto {rs = reg_of_string rs, offset = Result.toMaybe (String.toInt offset), rd = reg_of_string rd})
+        ["MOV",rd,rs] -> Just (Mov {rd = reg_of_string rd, rs = reg_of_string rs})
+        ["ADD",rd,rs,rt] -> Just (Add {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt})
+        ["SUB",rd,rs,rt] -> Just (Sub {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt})
+        ["MUL",rd,rs,rt] -> Just (Mul {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt})
+        ["DIV",rd,rs,rt] -> Just (Div {rd = reg_of_string rd, rs = reg_of_string rs, rt = reg_of_string rt})
+        ["CMP",rs,rt] -> Just (Cmp {rs = reg_of_string rs, rt = reg_of_string rt})
+        ["BLT",disp] -> Just (Blt (Result.toMaybe (String.toInt disp)))
+        ["BEQ",disp] -> Just (Beq (Result.toMaybe (String.toInt disp)))     
+        ["BGT",disp] -> Just (Bgt (Result.toMaybe (String.toInt disp)))
+        ["JMP",disp] -> Just (Jmp (Result.toMaybe (String.toInt disp)))
+        ["JSR",disp] -> Just (Jsr (Result.toMaybe (String.toInt disp)))
+        ["R"] -> Just R
+        ["HLT"] -> Just Hlt
+        _ -> Nothing
+
+getInstruction: Int -> List (Maybe a) -> Maybe a
+getInstruction a text = 
+    let 
+        instruction = ramGet a text
+    in 
+        case instruction of 
+            Just (Just i) -> Just i
+            _ -> Nothing
 
 
 cycle: Model -> Model
 cycle model = 
     let
-        instruction = ramGet model.pc model.image.text 
+        instruction = getInstruction model.pc model.image.text 
         registers = model.registers
         pc = model.pc
         ra = model.ra
         psw = model.psw
         img = model.image
-        ptInstruction = model.ptInstruction
+        field = model.field
         newpc = pc + 1
     in 
 
     case instruction of
-        Lod {rd, offset, rs} ->
-            let 
-                addr = offset + (registerGet rs registers)
-                value = ramGet addr img.data
-                newRegisters = registerPut value rd registers
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Lod {rd, offset, rs}) ->
+            case (rd, offset, rs) of
+                (Just rd, Just offset, Just rs) ->
+                    let 
+                        addr = offset + (registerGet rs registers)
+                        value = Maybe.withDefault 0 (ramGet addr img.data)
+                        newRegisters = registerPut value rd registers
+                    in 
+                        { model | registers = newRegisters , pc = newpc}
+                _ -> { model | error = True , errorMsg = "There is something wrong with your Lod command in line " ++ (toString pc)}
+
         
-        Li {rd, number} ->
-            let 
-                newRegisters = registerPut number rd registers
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Li {rd, number}) ->
+            case (rd, number) of 
+                (Just rd, Just number) ->
+                    let 
+                        newRegisters = registerPut number rd registers
+                    in 
+                        { model | registers = newRegisters , pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Li command in line " ++ (toString pc)}
         
-        Sto {rs, offset, rd} ->
-            let 
-                addr = offset + (registerGet rs registers)
-                value = registerGet rs registers
-                newData = ramPut value addr img.data
-                newImage = {text = img.text, data = newData}
-                newModel = {registers = registers, pc = newpc, ra = ra, psw = psw, image = newImage, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Sto {rs, offset, rd}) ->
+            case (rs, offset, rd) of 
+                (Just rs, Just offset, Just rd) ->
+                    let 
+                        addr = offset + (registerGet rs registers)
+                        value = registerGet rs registers
+                        newData = ramPut value addr img.data
+                        newImage = {text = img.text, data = newData}
+                    in 
+                        { model | pc = newpc, image = newImage}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Sto command in line " ++ (toString pc)}
 
-        Mov {rd, rs} -> 
-            let 
-                v = registerGet rs registers 
-                newRegisters = registerPut v rd registers
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Mov {rd, rs}) -> 
+            case (rd, rs) of 
+                (Just rd, Just rs) ->
+                    let 
+                        v = registerGet rs registers 
+                        newRegisters = registerPut v rd registers
+                    in 
+                        { model | registers = newRegisters, pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Mov command in line " ++ (toString pc)}
 
-        Add {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 + v2) rd registers 
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Add {rd, rs, rt}) -> 
+            case (rd, rs, rt) of 
+                (Just rd, Just rs, Just rt) ->
+                    let 
+                        v1 = registerGet rs registers 
+                        v2 = registerGet rt registers 
+                        newRegisters = registerPut (v1 + v2) rd registers 
+                    in
+                        { model | registers = newRegisters, pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Add command in line " ++ (toString pc)}
 
-        Sub {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 - v2) rd registers 
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Sub {rd, rs, rt}) -> 
+            case (rd, rs, rt) of 
+                (Just rd, Just rs, Just rt) ->
+                    let 
+                        v1 = registerGet rs registers 
+                        v2 = registerGet rt registers 
+                        newRegisters = registerPut (v1 - v2) rd registers 
+                    in
+                        { model | registers = newRegisters, pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Sub command in line " ++ (toString pc)}
 
-        Mul {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 * v2) rd registers 
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel  
+        Just (Mul {rd, rs, rt}) -> 
+            case (rd, rs, rt) of 
+                (Just rd, Just rs, Just rt) ->
+                    let 
+                        v1 = registerGet rs registers 
+                        v2 = registerGet rt registers 
+                        newRegisters = registerPut (v1 * v2) rd registers 
+                    in
+                        { model | registers = newRegisters, pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Mul command in line " ++ (toString pc)}
 
-        Div {rd, rs, rt} -> 
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                newRegisters = registerPut (v1 // v2) rd registers 
-                newModel = {registers = newRegisters, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel    
+        Just (Div {rd, rs, rt}) -> 
+            case (rd, rs, rt) of 
+                (Just rd, Just rs, Just rt) ->
+                    let 
+                        v1 = registerGet rs registers 
+                        v2 = registerGet rt registers 
+                        newRegisters = registerPut (v1 // v2) rd registers 
+                    in
+                        { model | registers = newRegisters, pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Div command in line " ++ (toString pc)}   
 
-        Cmp {rs, rt} ->
-            let 
-                v1 = registerGet rs registers 
-                v2 = registerGet rt registers 
-                value = v1 - v2
-                newModel = {registers = registers, pc = newpc, ra = ra, psw = value, image = img, ptInstruction = ptInstruction}
-            in 
-                newModel
+        Just (Cmp {rs, rt}) ->
+            case (rs, rt) of 
+                (Just rs, Just rt) ->
+                    let 
+                        v1 = registerGet rs registers 
+                        v2 = registerGet rt registers 
+                        value = v1 - v2
+                    in 
+                        { model | pc = newpc, psw = value}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Cmp command in line " ++ (toString pc)}
 
-        Blt disp ->
-            case psw < 0 of 
-                True -> 
-                let
-                    newModel = {registers = registers, pc = pc + disp, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
-                False ->
-                let 
-                    newModel = {registers = registers, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (Blt disp) ->
+            case disp of 
+                Just disp ->
+                    case psw < 0 of 
+                        True -> { model | pc = pc + disp}
+                        False -> { model | pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Blt command in line " ++ (toString pc)}
 
-        Beq disp ->
-            case psw == 0 of 
-                True -> 
-                let
-                    newModel = {registers = registers, pc = pc + disp, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
-                False -> 
-                let
-                    newModel = {registers = registers, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (Beq disp) ->
+            case disp of 
+                Just disp ->
+                    case psw == 0 of 
+                        True -> { model | pc = pc + disp}
+                        False -> { model | pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Beq command in line " ++ (toString pc)}
 
-        Bgt disp ->
-            case psw > 0 of 
-                True -> 
-                let
-                    newModel = {registers = registers, pc = pc + disp, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
-                False -> 
-                let
-                    newModel = {registers = registers, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (Bgt disp) ->
+            case disp of 
+                Just disp ->
+                    case psw < 0 of 
+                        True -> { model | pc = pc + disp}
+                        False -> { model | pc = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Bgt command in line " ++ (toString pc)}
 
-        Jmp disp -> 
-                let
-                    newModel = {registers = registers, pc = pc + disp, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (Jmp disp) ->
+            case disp of 
+                Just disp -> { model | pc = pc + disp}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Jmp command in line " ++ (toString pc)}
 
-        Jsr disp -> 
-                let
-                    newModel = {registers = registers, pc = pc + disp, ra = newpc, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (Jsr disp) -> 
+            case disp of 
+                Just disp -> { model | pc = pc + disp, ra = newpc}
+                _ -> { model | error = True, errorMsg = "There is something wrong with your Jsr command in line " ++ (toString pc)}
 
-        R -> 
-                let
-                    newModel = {registers = registers, pc = ra, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
-                in 
-                    newModel
+        Just (R) ->{ model | pc = ra}
 
-        Hlt -> 
+        Just (Hlt) -> 
                 let 
                     () = (Debug.log "\nSVM Halt" (), printState pc psw ra registers)
-                    newModel = {registers = registers, pc = newpc, ra = ra, psw = psw, image = img, ptInstruction = ptInstruction}
                 in 
-                    newModel
+                    { model | pc = newpc}
+        _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "There is something wrong with your instruction in line " ++ (toString newpc) }
 
 svm: Model -> Model
 svm model = 
     let 
-        instruction = ramGet model.pc model.image.text
+        instruction = getInstruction model.pc model.image.text
     in 
     case instruction of 
-        Hlt -> cycle model
+        Just Hlt -> cycle model
         _   -> 
             let 
                 newModel = cycle model
@@ -535,12 +376,12 @@ update msg model =
 
         SaveInstruction code ->
             let 
-                ptInstruction = code 
+                field = code 
             in 
-                {model | ptInstruction = ptInstruction}
+                {model | field = field}
         Instructions ->
             let 
-                text = List.map processCode (List.map String.words (String.lines model.ptInstruction))
+                text = List.map processCode (List.map String.words (String.lines model.field))
                 () = Debug.log (toString text) ()
                 newImage = {text = text, data = model.image.data}
             in 
