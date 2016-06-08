@@ -46,7 +46,7 @@ reg_of_string s =
         "R1" -> Just R1
         "R2" -> Just R2
         "R3" -> Just R3
-        "Zero" -> Just Zero 
+        "ZERO" -> Just Zero 
         _ -> Nothing
 
 registerGet: Reg -> Registers -> Int
@@ -151,21 +151,23 @@ main = beginnerProgram {model = model, update = update, view = view }
 
 --Model 
 
-type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String}
+type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String, finished: Bool}
 
 model: Model
 model =
-    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = ""}
+    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = "", finished = False}
 
+init: Model
+init = model 
 
 --Update
 
 type Msg = 
-      Instructions
-    | SaveInstruction String
+      Instructions String
     | Run
     | RAM String
     | Step
+    | Reset
 
 --A helper function for processing instructions
 
@@ -352,7 +354,7 @@ cycle model =
                 let 
                     () = (Debug.log "\nSVM Halt" (), printState pc psw ra registers)
                 in 
-                    { model | pc = newpc}
+                    { model | pc = newpc, errorMsg = "SVM Halt", finished = True}
         _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "There is something wrong with your instruction in line " ++ (toString newpc) }
 
 svm: Model -> Model
@@ -368,43 +370,47 @@ svm model =
             in 
                 svm newModel 
 
+-- A helper function to facilitate the processing of codes
+separate: String -> List String
+separate s = List.concat (List.map String.words (String.split "," s))
+
 
 update: Msg -> Model -> Model
 update msg model = 
     case msg of 
         Step -> cycle model
 
-        SaveInstruction code ->
+        Instructions code ->
             let 
-                field = code 
-            in 
-                {model | field = field}
-        Instructions ->
-            let 
-                text = List.map processCode (List.map String.words (String.lines model.field))
+                text = List.map processCode (List.map separate (String.lines (String.toUpper code)))
                 () = Debug.log (toString text) ()
                 newImage = {text = text, data = model.image.data}
             in 
                 {model | image = newImage}
+        
         RAM numbers ->
             let 
                 data = List.map (Result.withDefault 0) (List.map String.toInt (String.words numbers))
                 newImage = {text = model.image.text, data = data}
             in 
                 {model | image = newImage}
+        
         Run ->  svm model
 
+        Reset -> {init | image = model.image}
 
 --View
 
 view: Model -> Html Msg
-view model = 
+view model =
     div []
       [ div [] [ Html.text "RAM data", input [onInput RAM] []]
-      , div [] [ Html.text "Instruction", textarea [onInput SaveInstruction] []]
-      , button [ onClick Instructions ] [ Html.text "Submit"]
-      , button [ onClick Run ] [ Html.text "Run" ]
-      , button [ onClick Step] [ Html.text "Step"]
+      , div [] [ Html.text "Instruction", textarea [onInput Instructions] []]
+      --, button [ onClick Instructions ] [ Html.text "Save code"]
+      , button [ onClick Run, disabled model.finished ] [ Html.text "Run" ]
+      , button [ onClick Step, disabled model.finished ] [ Html.text "Step"]
+      , button [ onClick Reset, disabled (model == init)] [ Html.text "Reset"]  
+      , div [] [ textarea [disabled True] [Html.text model.errorMsg]]
       , div [] [ Html.text "registers", 
                 ul [class "registers"] 
                 [ li [] [Html.text (toString model.registers.r0)]
