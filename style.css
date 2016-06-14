@@ -8,39 +8,29 @@ body {
 button {
     margin-left: auto;
     margin-right: auto;
-    padding: 10;
+    padding: 10px;
     border: 5;
     background: #f5f5f5;
-    font-size: 80%;
+    font-size: 100%;
     vertical-align: baseline;
     font-family: inherit;
-    font-weight: inherit;
+    font-weight: bold;
     color: #000000;
-    -webkit-appearance: none;
-    -ms-appearance: none;
-    appearance: none;
-    -webkit-font-smoothing: antialiased;
-    -moz-font-smoothing: antialiased;
-    -ms-font-smoothing: antialiased;
-    font-smoothing: antialiased;
+    border-radius:15px;
 }
 
 body {
-    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font: 18px 'Helvetica Neue', Helvetica, Arial, sans-serif;
     line-height: 1.4em;
-    background: #f5f5f5;
+    background: lightblue;
     color: #4d4d4d;
-    min-width: 230px;
-    max-width: 500px;
-    max-height: 30px;
+    max-width: 850px;
+    max-height: 500px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    -webkit-font-smoothing: antialiased;
-    -moz-font-smoothing: antialiased;
-    -ms-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-    font-weight: 300;
+    font-weight: bold;
+    border-bottom-width: 0;
 }
 
 RAM-data {
@@ -53,33 +43,56 @@ RAM-data {
     -moz-font-smoothing: antialiased;
     -ms-font-smoothing: antialiased;
     font-smoothing: antialiased;
-    font-weight: 300;
 }
 
+ .RAM {
+    border-radius: 10px;
+    width: 20em;
+    font-size: 18px;
+    background-color: #f5f5f5;
+ }
+ 
  .number {
     height: 15px;
     width: 20px;
     position: relative;
-    margin: auto;
+    float: right;
     
  }
 
 
 .button_list {
-    position: relative;
     margin:auto;
-    display: inline-table;
-    align-self: center;
+    padding-top: 20px;
 }
 
-.text {
+.instruction {
+    border-radius: 10px;
     position: relative;
-    margin: auto;
+    float:left;
     display: inline;
+    width: 20em;
+    height: 16em;
+    font-size: 18px;
+    background-color: #f5f5f5;
+}
+
+.message {
+    border-radius: 10px;
+    position: relative;
+    float:right;
+    display: inline;
+    width: 15em;
+    height: 8em;
+    font-size: 18px;
+    background-color: #f5f5f5;
 }
 
 .Page {
-    display: inline;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black;
+    border-bottom-width: 0px;
 }
 
 .left {
@@ -96,4 +109,68 @@ RAM-data {
 .middle {
     position: relative;
     margin: auto;
+}
+
+.registers {
+    border-radius: 10px;
+    line-height: 2em;
+    font-size: 18px;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+}
+
+
+.button1 {
+    float: left;
+}
+
+.button2 {
+    margin: 0;
+}
+
+.button3 {
+    float: right;
+}
+
+button:hover {
+    background: green;
+    opacity:0.5;
+}
+
+button:disabled {
+    background: grey;
+}
+.textareaLinesNumbers {
+  position: relative;
+      border-radius: 10px;
+    position: relative;
+    float:left;
+    display: inline;
+    width: 20em;
+    height: 20em;
+    font-size: 18px;
+    background-color: #f5f5f5;
+}
+
+.textareaLinesNumbers textarea.linesContainer {
+  display:block;
+  border:none;
+  position:absolute;
+  overflow:hidden;
+  text-align:right;
+  padding-right:0.2em;
+  z-index:0;
+  resize:none;
+}
+
+.textareaLinesNumbers textarea:not(.linesContainer) {
+  z-index:1;
+  position:relative;
+  resize:none;
+}
+
+.textareaLinesNumbers .ui-resizable-se {
+  bottom: 13px;
+  right: -2px;
 }

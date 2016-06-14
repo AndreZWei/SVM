@@ -318,7 +318,7 @@ cycle model =
             case disp of 
                 Just disp ->
                     case psw < 0 of 
-                        True -> { model | pc = pc + disp}
+                        True -> { model | pc = newpc +disp}
                         False -> { model | pc = newpc}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Blt command in line " ++ (toString pc)}
 
@@ -326,7 +326,7 @@ cycle model =
             case disp of 
                 Just disp ->
                     case psw == 0 of 
-                        True -> { model | pc = pc + disp}
+                        True -> { model | pc = newpc + disp}
                         False -> { model | pc = newpc}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Beq command in line " ++ (toString pc)}
 
@@ -334,18 +334,18 @@ cycle model =
             case disp of 
                 Just disp ->
                     case psw < 0 of 
-                        True -> { model | pc = pc + disp}
+                        True -> { model | pc = newpc + disp}
                         False -> { model | pc = newpc}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Bgt command in line " ++ (toString pc)}
 
         Just (Jmp disp) ->
             case disp of 
-                Just disp -> { model | pc = pc + disp}
+                Just disp -> { model | pc = newpc + disp}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Jmp command in line " ++ (toString pc)}
 
         Just (Jsr disp) -> 
             case disp of 
-                Just disp -> { model | pc = pc + disp, ra = newpc}
+                Just disp -> { model | pc = newpc + disp, ra = newpc}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Jsr command in line " ++ (toString pc)}
 
         Just (R) ->{ model | pc = ra}
@@ -364,11 +364,12 @@ svm model =
     in 
     case instruction of 
         Just Hlt -> cycle model
-        _   -> 
-            let 
-                newModel = cycle model
-            in 
-                svm newModel 
+        _   ->  case model.error of 
+            False ->  let 
+                        newModel = cycle model
+                      in 
+                        svm newModel
+            True -> model 
 
 -- A helper function to facilitate the processing of codes
 separate: String -> List String
@@ -403,37 +404,40 @@ update msg model =
 
 view: Model -> Html Msg
 view model =
-    section [ class "Page"]
-      [ h1 [ class "middle" ] [Html.text "Simple Virtual Machine"] 
-      , div [ class "left" ]
-        [ div [ class "text"] [Html.text "RAM Data"]
-        , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM] []]
+    div []
+      [ header [] [h1 [] [Html.text "Simple Virtual Machine"]] 
+      , section [ class "body"] 
+      [ span [ class "left" ]
+        [ span [ class "text"] [Html.text "RAM Data"]
+        , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
         , br [] []
-        , div [ class "text"] [Html.text "Instructions"]
-        , div [] [  textarea [onInput Instructions] []]
-        --, button [ onClick Instructions ] [ Html.text "Save code"]
+        , p [] [Html.text "Instructions"]
+        , div [] [ textarea [onInput Instructions, class "instruction"] []]
+        , p [] [Html.text ("Number of lines = " ++ (toString (List.length model.image.text)))]
         , div [ class "button_list"]
-            [ button [ onClick Run, disabled model.finished ] [ Html.text "Run" ]
-            , button [ onClick Step, disabled model.finished ] [ Html.text "Step"]
-            , button [ onClick Reset, disabled (model == init)] [ Html.text "Reset"]  
+            [ button [ onClick Run, disabled model.finished, class "button1" ] [ Html.text "Run" ]
+            , button [ onClick Step, disabled model.finished, class "button2" ] [ Html.text "Step"]
+            , button [ onClick Reset, disabled (model == init), class "button3"] [ Html.text "Reset"]  
             ]
-        , div [] [ Html.text "System Message"]
-        , div [] [ textarea [disabled True] [Html.text model.errorMsg]]
         ]
       
-      , div [ class "right" ]
-        [  div [] [ Html.text "Registers", 
-                    ul [class "registers"] 
+      , span [ class "right" ]
+        [  div [class "registers"] [ Html.text "Registers", 
+                    ul [] 
                     [ li [] [Html.text "R0 = ", Html.text (toString model.registers.r0)]
-                    , li [] [Html.text (toString model.registers.r1)]
-                    , li [] [Html.text (toString model.registers.r2)]
-                    , li [] [Html.text (toString model.registers.r3)]
-                    , li [] [Html.text (toString model.pc)]
-                    , li [] [Html.text (toString model.ra)]
-                    , li [] [Html.text (toString model.psw)]
+                    , li [] [Html.text "R1 = ", Html.text (toString model.registers.r1)]
+                    , li [] [Html.text "R2 = ", Html.text (toString model.registers.r2)]
+                    , li [] [Html.text "R3 = ", Html.text (toString model.registers.r3)]
+                    , li [] [Html.text "PC = ", Html.text (toString model.pc)]
+                    , li [] [Html.text "RA = ", Html.text (toString model.ra)]
+                    , li [] [Html.text "PSW = ", Html.text (toString model.psw)]
                     ]
                  ]
+        , br [] []
+        , span [] [ Html.text "System Message"]
+        ,  div [] [ textarea [disabled model.error, class "message"] [Html.text model.errorMsg]]
         ]
+      ]
       ]
       
 

@@ -7781,7 +7781,7 @@ var _user$project$Main$cycle = function (model) {
 					if (_p20 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: pc + _p19._0});
+							{pc: newpc + _p19._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7805,7 +7805,7 @@ var _user$project$Main$cycle = function (model) {
 					if (_p22 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: pc + _p21._0});
+							{pc: newpc + _p21._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7829,7 +7829,7 @@ var _user$project$Main$cycle = function (model) {
 					if (_p24 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: pc + _p23._0});
+							{pc: newpc + _p23._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7851,7 +7851,7 @@ var _user$project$Main$cycle = function (model) {
 				if (_p25.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: pc + _p25._0});
+						{pc: newpc + _p25._0});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -7868,7 +7868,7 @@ var _user$project$Main$cycle = function (model) {
 				if (_p26.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: pc + _p26._0, ra: newpc});
+						{pc: newpc + _p26._0, ra: newpc});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -7920,10 +7920,15 @@ var _user$project$Main$svm = function (model) {
 		if ((_p28.ctor === 'Just') && (_p28._0.ctor === 'Hlt')) {
 			return _user$project$Main$cycle(model);
 		} else {
-			var newModel = _user$project$Main$cycle(model);
-			var _v27 = newModel;
-			model = _v27;
-			continue svm;
+			var _p29 = model.error;
+			if (_p29 === false) {
+				var newModel = _user$project$Main$cycle(model);
+				var _v28 = newModel;
+				model = _v28;
+				continue svm;
+			} else {
+				return model;
+			}
 		}
 	}
 };
@@ -7945,8 +7950,8 @@ var _user$project$Main$R2 = {ctor: 'R2'};
 var _user$project$Main$R1 = {ctor: 'R1'};
 var _user$project$Main$R0 = {ctor: 'R0'};
 var _user$project$Main$reg_of_string = function (s) {
-	var _p29 = s;
-	switch (_p29) {
+	var _p30 = s;
+	switch (_p30) {
 		case 'R0':
 			return _elm_lang$core$Maybe$Just(_user$project$Main$R0);
 		case 'R1':
@@ -8006,150 +8011,150 @@ var _user$project$Main$Lod = function (a) {
 	return {ctor: 'Lod', _0: a};
 };
 var _user$project$Main$processCode = function (s) {
-	var _p30 = s;
-	_v29_16:
+	var _p31 = s;
+	_v30_16:
 	do {
-		if (_p30.ctor === '::') {
-			if (_p30._1.ctor === '::') {
-				if (_p30._1._1.ctor === '::') {
-					if (_p30._1._1._1.ctor === '::') {
-						if (_p30._1._1._1._1.ctor === '[]') {
-							switch (_p30._0) {
+		if (_p31.ctor === '::') {
+			if (_p31._1.ctor === '::') {
+				if (_p31._1._1.ctor === '::') {
+					if (_p31._1._1._1.ctor === '::') {
+						if (_p31._1._1._1._1.ctor === '[]') {
+							switch (_p31._0) {
 								case 'LOD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Lod(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p30._1._1._0)),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+													_elm_lang$core$String$toInt(_p31._1._1._0)),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'STO':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sto(
 											{
-												rs: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p30._1._1._0)),
-												rd: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+													_elm_lang$core$String$toInt(_p31._1._1._0)),
+												rd: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'ADD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Add(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'SUB':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sub(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'MUL':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Mul(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'DIV':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Div(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								default:
-									break _v29_16;
+									break _v30_16;
 							}
 						} else {
-							break _v29_16;
+							break _v30_16;
 						}
 					} else {
-						switch (_p30._0) {
+						switch (_p31._0) {
 							case 'LI':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Li(
 										{
-											rd: _user$project$Main$reg_of_string(_p30._1._0),
+											rd: _user$project$Main$reg_of_string(_p31._1._0),
 											number: _elm_lang$core$Result$toMaybe(
-												_elm_lang$core$String$toInt(_p30._1._1._0))
+												_elm_lang$core$String$toInt(_p31._1._1._0))
 										}));
 							case 'MOV':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Mov(
 										{
-											rd: _user$project$Main$reg_of_string(_p30._1._0),
-											rs: _user$project$Main$reg_of_string(_p30._1._1._0)
+											rd: _user$project$Main$reg_of_string(_p31._1._0),
+											rs: _user$project$Main$reg_of_string(_p31._1._1._0)
 										}));
 							case 'CMP':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Cmp(
 										{
-											rs: _user$project$Main$reg_of_string(_p30._1._0),
-											rt: _user$project$Main$reg_of_string(_p30._1._1._0)
+											rs: _user$project$Main$reg_of_string(_p31._1._0),
+											rt: _user$project$Main$reg_of_string(_p31._1._1._0)
 										}));
 							default:
-								break _v29_16;
+								break _v30_16;
 						}
 					}
 				} else {
-					switch (_p30._0) {
+					switch (_p31._0) {
 						case 'BLT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Blt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'BEQ':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Beq(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'BGT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Bgt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'JMP':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jmp(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'JSR':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jsr(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						default:
-							break _v29_16;
+							break _v30_16;
 					}
 				}
 			} else {
-				switch (_p30._0) {
+				switch (_p31._0) {
 					case 'R':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$R);
 					case 'HLT':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$Hlt);
 					default:
-						break _v29_16;
+						break _v30_16;
 				}
 			}
 		} else {
-			break _v29_16;
+			break _v30_16;
 		}
 	} while(false);
 	return _elm_lang$core$Maybe$Nothing;
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p31 = msg;
-		switch (_p31.ctor) {
+		var _p32 = msg;
+		switch (_p32.ctor) {
 			case 'Step':
 				return _user$project$Main$cycle(model);
 			case 'Instructions':
@@ -8160,8 +8165,8 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$List$map,
 						_user$project$Main$separate,
 						_elm_lang$core$String$lines(
-							_elm_lang$core$String$toUpper(_p31._0))));
-				var _p32 = A2(
+							_elm_lang$core$String$toUpper(_p32._0))));
+				var _p33 = A2(
 					_elm_lang$core$Debug$log,
 					_elm_lang$core$Basics$toString(text),
 					{ctor: '_Tuple0'});
@@ -8176,7 +8181,7 @@ var _user$project$Main$update = F2(
 					A2(
 						_elm_lang$core$List$map,
 						_elm_lang$core$String$toInt,
-						_user$project$Main$separate(_p31._0)));
+						_user$project$Main$separate(_p32._0)));
 				var newImage = {text: model.image.text, data: data};
 				return _elm_lang$core$Native_Utils.update(
 					model,
@@ -8200,245 +8205,286 @@ var _user$project$Main$Instructions = function (a) {
 };
 var _user$project$Main$view = function (model) {
 	return A2(
-		_elm_lang$html$Html$section,
+		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('Page')
-			]),
+			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$h1,
+				_elm_lang$html$Html$header,
 				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('middle')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Simple Virtual Machine')
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('left')
-					]),
+					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('text')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('RAM Data')
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$id('RAM_data')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$input,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Attributes$placeholder('e.g. 1, 1, 2, 3, 5...'),
-										_elm_lang$html$Html_Events$onInput(_user$project$Main$RAM)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[]))
-							])),
-						A2(
-						_elm_lang$html$Html$br,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('text')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Instructions')
-							])),
-						A2(
-						_elm_lang$html$Html$div,
+						_elm_lang$html$Html$h1,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								A2(
-								_elm_lang$html$Html$textarea,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Events$onInput(_user$project$Main$Instructions)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[]))
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('button_list')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$button,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Events$onClick(_user$project$Main$Run),
-										_elm_lang$html$Html_Attributes$disabled(model.finished)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Run')
-									])),
-								A2(
-								_elm_lang$html$Html$button,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Events$onClick(_user$project$Main$Step),
-										_elm_lang$html$Html_Attributes$disabled(model.finished)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Step')
-									])),
-								A2(
-								_elm_lang$html$Html$button,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Events$onClick(_user$project$Main$Reset),
-										_elm_lang$html$Html_Attributes$disabled(
-										_elm_lang$core$Native_Utils.eq(model, _user$project$Main$init))
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Reset')
-									]))
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('System Message')
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$textarea,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Attributes$disabled(true)
-									]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text(model.errorMsg)
-									]))
+								_elm_lang$html$Html$text('Simple Virtual Machine')
 							]))
 					])),
 				A2(
-				_elm_lang$html$Html$div,
+				_elm_lang$html$Html$section,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('right')
+						_elm_lang$html$Html_Attributes$class('body')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
+						_elm_lang$html$Html$span,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html$text('Registers'),
+								_elm_lang$html$Html_Attributes$class('left')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
 								A2(
-								_elm_lang$html$Html$ul,
+								_elm_lang$html$Html$span,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$class('text')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('RAM Data')
+									])),
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$id('RAM_data')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A2(
+										_elm_lang$html$Html$input,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Attributes$placeholder('e.g. 1, 1, 2, 3, 5...'),
+												_elm_lang$html$Html_Events$onInput(_user$project$Main$RAM),
+												_elm_lang$html$Html_Attributes$class('RAM')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[]))
+									])),
+								A2(
+								_elm_lang$html$Html$br,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[])),
+								A2(
+								_elm_lang$html$Html$p,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Instructions')
+									])),
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A2(
+										_elm_lang$html$Html$textarea,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onInput(_user$project$Main$Instructions),
+												_elm_lang$html$Html_Attributes$class('instruction')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[]))
+									])),
+								A2(
+								_elm_lang$html$Html$p,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'Number of lines = ',
+											_elm_lang$core$Basics$toString(
+												_elm_lang$core$List$length(model.image.text))))
+									])),
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$class('button_list')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A2(
+										_elm_lang$html$Html$button,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onClick(_user$project$Main$Run),
+												_elm_lang$html$Html_Attributes$disabled(model.finished),
+												_elm_lang$html$Html_Attributes$class('button1')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html$text('Run')
+											])),
+										A2(
+										_elm_lang$html$Html$button,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onClick(_user$project$Main$Step),
+												_elm_lang$html$Html_Attributes$disabled(model.finished),
+												_elm_lang$html$Html_Attributes$class('button2')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html$text('Step')
+											])),
+										A2(
+										_elm_lang$html$Html$button,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onClick(_user$project$Main$Reset),
+												_elm_lang$html$Html_Attributes$disabled(
+												_elm_lang$core$Native_Utils.eq(model, _user$project$Main$init)),
+												_elm_lang$html$Html_Attributes$class('button3')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html$text('Reset')
+											]))
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$span,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('right')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$div,
 								_elm_lang$core$Native_List.fromArray(
 									[
 										_elm_lang$html$Html_Attributes$class('registers')
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
+										_elm_lang$html$Html$text('Registers'),
 										A2(
-										_elm_lang$html$Html$li,
+										_elm_lang$html$Html$ul,
 										_elm_lang$core$Native_List.fromArray(
 											[]),
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text('R0 = '),
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.registers.r0))
-											])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('R0 = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.registers.r0))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('R1 = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.registers.r1))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('R2 = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.registers.r2))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('R3 = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.registers.r3))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('PC = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.pc))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('RA = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.ra))
+													])),
+												A2(
+												_elm_lang$html$Html$li,
+												_elm_lang$core$Native_List.fromArray(
+													[]),
+												_elm_lang$core$Native_List.fromArray(
+													[
+														_elm_lang$html$Html$text('PSW = '),
+														_elm_lang$html$Html$text(
+														_elm_lang$core$Basics$toString(model.psw))
+													]))
+											]))
+									])),
+								A2(
+								_elm_lang$html$Html$br,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[])),
+								A2(
+								_elm_lang$html$Html$span,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('System Message')
+									])),
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
 										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
+										_elm_lang$html$Html$textarea,
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.registers.r1))
-											])),
-										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
+												_elm_lang$html$Html_Attributes$disabled(model.error),
+												_elm_lang$html$Html_Attributes$class('message')
+											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.registers.r2))
-											])),
-										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.registers.r3))
-											])),
-										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.pc))
-											])),
-										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.ra))
-											])),
-										A2(
-										_elm_lang$html$Html$li,
-										_elm_lang$core$Native_List.fromArray(
-											[]),
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.psw))
+												_elm_lang$html$Html$text(model.errorMsg)
 											]))
 									]))
 							]))
