@@ -24,8 +24,8 @@ body {
     line-height: 1.4em;
     background: lightblue;
     color: #4d4d4d;
-    max-width: 850px;
-    max-height: 500px;
+    max-width: 1000px;
+    max-height: 1000px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -64,17 +64,19 @@ RAM-data {
 .button_list {
     margin:auto;
     padding-top: 20px;
+    position:relative;
+    height: 100px;
+    width: 360px;
 }
 
 .instruction {
     border-radius: 10px;
     position: relative;
-    float:left;
-    display: inline;
     width: 20em;
     height: 16em;
     font-size: 18px;
-    background-color: #f5f5f5;
+    background-color: lightblue;
+
 }
 
 .message {
@@ -82,7 +84,7 @@ RAM-data {
     position: relative;
     float:right;
     display: inline;
-    width: 15em;
+    width: 20em;
     height: 8em;
     font-size: 18px;
     background-color: #f5f5f5;
@@ -96,6 +98,7 @@ RAM-data {
 }
 
 .left {
+    display:block;
     padding: 50px;
     position: relative;
     float: left;
@@ -122,15 +125,23 @@ RAM-data {
 
 
 .button1 {
-    float: left;
+    position: relative;
+    margin: 0;
 }
 
 .button2 {
+    position: relative;
     margin: 0;
 }
 
 .button3 {
-    float: right;
+    position: relative;
+    margin: 0;
+}
+
+.button4 {
+    position: relative;
+    margin: 0;
 }
 
 button:hover {
@@ -141,36 +152,50 @@ button:hover {
 button:disabled {
     background: grey;
 }
-.textareaLinesNumbers {
-  position: relative;
-      border-radius: 10px;
+
+
+.speed {
+    height: 1em;
+    width: 2em;
+}
+
+.input_instruction {
+    height: 292px;
+    width: 352px;
     position: relative;
-    float:left;
-    display: inline;
-    width: 20em;
-    height: 20em;
+    float: right;
+    font-size:18px;
+    line-height: 1.4em;
+
+}
+
+.line {
+    height: 1.4em;
+    background-color: lightblue;
+    padding: 0px;
     font-size: 18px;
-    background-color: #f5f5f5;
 }
 
-.textareaLinesNumbers textarea.linesContainer {
-  display:block;
-  border:none;
-  position:absolute;
-  overflow:hidden;
-  text-align:right;
-  padding-right:0.2em;
-  z-index:0;
-  resize:none;
+
+#codeTextarea{
+    width:500px;
+    height:510px;
 }
 
-.textareaLinesNumbers textarea:not(.linesContainer) {
-  z-index:1;
-  position:relative;
-  resize:none;
+.textAreaWithLines{
+    font-family:inherit;      
+    border:0px solid
+      
+}
+   
+.textAreaWithLines textarea,.textAreaWithLines div{
+    border:0px;
+    line-height:120%;
+    font-size:15px;
+    font-weight: normal;
+}
+   
+.lineObj{
+    color:black;
 }
 
-.textareaLinesNumbers .ui-resizable-se {
-  bottom: 13px;
-  right: -2px;
-}

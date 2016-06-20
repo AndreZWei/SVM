@@ -9,6 +9,8 @@ import Html.App exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import String
+import Time exposing (..)
+import Json.Decode as Json
 
 
 -- Main program implementing an svm
@@ -147,18 +149,23 @@ printState pc psw ra registers =
 
 
 
-main = beginnerProgram {model = model, update = update, view = view }
+main = 
+    program {init = init, update = update, view = view, subscriptions = subs }
 
 --Model 
 
-type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String, finished: Bool}
+type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String, finished: Bool, running: Bool, time: Time, speed: Float, scrollTop: Int}
 
 model: Model
 model =
-    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = "", finished = False}
+    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = "", finished = False, running = False, time = 0, speed = 1, scrollTop = 0}
 
-init: Model
-init = model 
+initmodel: Model
+initmodel = model
+
+
+init: (Model, Cmd Msg)
+init = (model, Cmd.none)
 
 --Update
 
@@ -168,6 +175,10 @@ type Msg =
     | RAM String
     | Step
     | Reset
+    | UpdateTime Time
+    | SetSpeed String
+    | Stop
+    | Position Int
 
 --A helper function for processing instructions
 
@@ -354,7 +365,7 @@ cycle model =
                 let 
                     () = (Debug.log "\nSVM Halt" (), printState pc psw ra registers)
                 in 
-                    { model | pc = newpc, errorMsg = "SVM Halt", finished = True}
+                    { model | pc = newpc, errorMsg = "SVM Halt", finished = True, running = False}
         _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "There is something wrong with your instruction in line " ++ (toString newpc) }
 
 svm: Model -> Model
@@ -376,29 +387,48 @@ separate: String -> List String
 separate s = List.concat (List.map String.words (String.split "," s))
 
 
-update: Msg -> Model -> Model
+update: Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
     case msg of 
-        Step -> cycle model
+        Step -> (cycle model, Cmd.none)
 
         Instructions code ->
             let 
                 text = List.map processCode (List.map separate (String.lines (String.toUpper code)))
                 () = Debug.log (toString text) ()
                 newImage = {text = text, data = model.image.data}
+                newModel = {model | image = newImage, field = code}
             in 
-                {model | image = newImage}
+                (newModel, Cmd.none)
         
         RAM numbers ->
             let 
                 data = List.map (Result.withDefault 0) (List.map String.toInt (separate numbers))
-                newImage = {text = model.image.text, data = data}
+                newImage = {text = model.image.text, data = data} 
+                newModel = {model | image = newImage}
             in 
-                {model | image = newImage}
+                (newModel, Cmd.none)
         
-        Run ->  svm model
+        Run ->  
+            let 
+                newModel = { model | running = True}
+            in 
+                (newModel, Cmd.none)
 
-        Reset -> {init | image = model.image}
+        Reset -> 
+            let 
+                newModel = {initmodel | field = model.field, image = model.image, speed = model.speed}
+            in 
+                (newModel, Cmd.none)
+
+        UpdateTime time -> if (model.running == True) then (cycle model, Cmd.none) else (model, Cmd.none)
+
+        SetSpeed speed  -> Debug.log ("Current speed is" ++ (toString model.speed)) ({model|speed = (Result.withDefault 1 (String.toFloat speed))}, Cmd.none)
+
+        Stop -> { model| running = False, errorMsg = "SVM Halt"} ! []
+
+        Position scrollTop -> Debug.log "HELLO" ( { model | scrollTop = scrollTop }, Cmd.none)
+
 
 --View
 
@@ -412,17 +442,28 @@ view model =
         , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
         , br [] []
         , p [] [Html.text "Instructions"]
-        , div [] [ textarea [onInput Instructions, class "instruction"] []]
-        , p [] [Html.text ("Number of lines = " ++ (toString (List.length model.image.text)))]
+        {-, div [class "instruction"] 
+            [ let int = List.length (String.lines model.field) in div [class "line_number"] (draw int int)
+            , textarea [onInput Instructions, class "input_instruction"] []
+            , p [] [Html.text ("Number of lines = " ++ (toString (List.length model.image.text)))]
+            ]
+        -}
+        , createTextAreaWithLines model "input_instruction"
+        , br [] []   
         , div [ class "button_list"]
             [ button [ onClick Run, disabled model.finished, class "button1" ] [ Html.text "Run" ]
             , button [ onClick Step, disabled model.finished, class "button2" ] [ Html.text "Step"]
-            , button [ onClick Reset, disabled (model == init), class "button3"] [ Html.text "Reset"]  
+            , button [ onClick Reset, disabled (model == initmodel), class "button3"] [ Html.text "Reset"] 
+            , button [ onClick Stop, disabled (model == initmodel), class "button4"] [Html.text "Stop"] 
             ]
         ]
       
       , span [ class "right" ]
-        [  div [class "registers"] [ Html.text "Registers", 
+        [   p [] [  Html.text "Processing speed = "
+                 ,  input [onInput SetSpeed, class "speed"] []
+                 ,  Html.text "sec per instruction"
+                 ]
+        ,   div [class "registers"] [ Html.text "Registers", 
                     ul [] 
                     [ li [] [Html.text "R0 = ", Html.text (toString model.registers.r0)]
                     , li [] [Html.text "R1 = ", Html.text (toString model.registers.r1)]
@@ -439,6 +480,105 @@ view model =
         ]
       ]
       ]
+
+subs: Model -> Sub Msg
+subs model =
+    Time.every (model.speed * second) UpdateTime
+
+
+{--draw: Int -> Int ->List (Html Msg)
+draw int total = 
+    case (total < 12) of 
+        True -> let drawless int total = 
+                    case (int == 1) of 
+                        True -> [div [class "line"] [Html.text (toString (1+total-int))]]
+                        False -> ((div [class "line"] [Html.text ((toString (1 + total - int))++ "\n")])  :: (drawless (int-1) total))
+                in 
+                    drawless int total
+        False -> let drawmore int total =
+                    case (int == total - 11) of 
+                        True -> [div [class "line"] [Html.text ((toString (total)))]]
+                        False -> ((div [class "line"] [Html.text ((toString (2 * total - int - 11))++ "\n")])  :: (draw (int-1) total))
+                in 
+                    drawmore int total--}
+
+-- Create a string of line numbers
+string: Int -> Int -> String
+string n total = 
+    case (n == 1) of 
+        True -> (toString (total + 1 - n))
+        False -> (toString (total + 1 - n)) ++ "\n" ++ (string (n-1) total) 
+
+
+createTextAreaWithLines: Model -> String -> Html Msg
+createTextAreaWithLines model id =
+    div [ class "textAreaWithLines"
+        , styleEl
+        ]
+        [ div [ class "lineObj"
+              , (styleLo model)
+              ]
+              [ Html.text (string 1000 1000)]
+        , textarea [ styleTa
+                   , on "keyDown" (Json.succeed (Position model.scrollTop))
+                   , onMouseDown (Position model.scrollTop)
+                   , onScroll Position
+                   , onBlur (Position model.scrollTop)
+                   , onFocus (Position model.scrollTop)
+                   , onMouseOver Position
+                   , onInput Instructions
+                   , class "input_instruction"
+                   ] [ ]
+        ]
+
+styleEl: Attribute msg
+styleEl = 
+    style 
+        [ ("width", "352px")
+        , ("height", "290px")
+        , ("overflow", "hidden")
+        , ("position", "relative")
+        ]
+styleLo: Model -> Attribute msg
+styleLo model =
+    let scrollTop = model.scrollTop * (-1) + 2 in
+    style 
+        [ ("position", "absolute")
+        , ("left", "0px")
+        , ("width", "20px")
+        , ("textAlign", "center")
+        , ("top", toString (scrollTop)++"px")
+        ]
+
+--Why don't I give it a try?
+
+scrollTop: Json.Decoder Int
+scrollTop = 
+    Json.at ["target", "scrollTop"] Json.int
+
+
+styleTa: Attribute msg
+styleTa = 
+    style
+        [ ("position","absolute")
+        , ("left", "30px")
+        ]
+
+calculateScrollTop: Model -> Int -> Model
+calculateScrollTop model scrollTop =
+    { model | scrollTop = scrollTop}
+
+onScroll : (Int -> msg) -> Attribute msg
+onScroll tagger =
+    on "scroll" (Json.map tagger scrollTop)
+
+onMouseOver : (Int -> msg) -> Attribute msg
+onMouseOver tagger =
+    on "mouseover" (Json.map tagger scrollTop)
+
+
+
+
       
 
 

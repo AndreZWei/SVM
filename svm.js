@@ -3562,6 +3562,239 @@ var _elm_lang$core$Result$fromMaybe = F2(
 		}
 	});
 
+var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
+var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
+var _elm_lang$core$Task$spawnCmd = F2(
+	function (router, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Scheduler.spawn(
+			A2(
+				_elm_lang$core$Task$andThen,
+				_p1._0,
+				_elm_lang$core$Platform$sendToApp(router)));
+	});
+var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
+var _elm_lang$core$Task$mapError = F2(
+	function (f, task) {
+		return A2(
+			_elm_lang$core$Task$onError,
+			task,
+			function (err) {
+				return _elm_lang$core$Task$fail(
+					f(err));
+			});
+	});
+var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
+var _elm_lang$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return _elm_lang$core$Task$succeed(
+					func(a));
+			});
+	});
+var _elm_lang$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return _elm_lang$core$Task$succeed(
+							A2(func, a, b));
+					});
+			});
+	});
+var _elm_lang$core$Task$map3 = F4(
+	function (func, taskA, taskB, taskC) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return _elm_lang$core$Task$succeed(
+									A3(func, a, b, c));
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$map4 = F5(
+	function (func, taskA, taskB, taskC, taskD) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									taskD,
+									function (d) {
+										return _elm_lang$core$Task$succeed(
+											A4(func, a, b, c, d));
+									});
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$map5 = F6(
+	function (func, taskA, taskB, taskC, taskD, taskE) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskA,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskB,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							taskC,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									taskD,
+									function (d) {
+										return A2(
+											_elm_lang$core$Task$andThen,
+											taskE,
+											function (e) {
+												return _elm_lang$core$Task$succeed(
+													A5(func, a, b, c, d, e));
+											});
+									});
+							});
+					});
+			});
+	});
+var _elm_lang$core$Task$andMap = F2(
+	function (taskFunc, taskValue) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			taskFunc,
+			function (func) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					taskValue,
+					function (value) {
+						return _elm_lang$core$Task$succeed(
+							func(value));
+					});
+			});
+	});
+var _elm_lang$core$Task$sequence = function (tasks) {
+	var _p2 = tasks;
+	if (_p2.ctor === '[]') {
+		return _elm_lang$core$Task$succeed(
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	} else {
+		return A3(
+			_elm_lang$core$Task$map2,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$List_ops['::'], x, y);
+				}),
+			_p2._0,
+			_elm_lang$core$Task$sequence(_p2._1));
+	}
+};
+var _elm_lang$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			_elm_lang$core$Task$map,
+			function (_p3) {
+				return {ctor: '_Tuple0'};
+			},
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Task$spawnCmd(router),
+					commands)));
+	});
+var _elm_lang$core$Task$toMaybe = function (task) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		A2(_elm_lang$core$Task$map, _elm_lang$core$Maybe$Just, task),
+		function (_p4) {
+			return _elm_lang$core$Task$succeed(_elm_lang$core$Maybe$Nothing);
+		});
+};
+var _elm_lang$core$Task$fromMaybe = F2(
+	function ($default, maybe) {
+		var _p5 = maybe;
+		if (_p5.ctor === 'Just') {
+			return _elm_lang$core$Task$succeed(_p5._0);
+		} else {
+			return _elm_lang$core$Task$fail($default);
+		}
+	});
+var _elm_lang$core$Task$toResult = function (task) {
+	return A2(
+		_elm_lang$core$Task$onError,
+		A2(_elm_lang$core$Task$map, _elm_lang$core$Result$Ok, task),
+		function (msg) {
+			return _elm_lang$core$Task$succeed(
+				_elm_lang$core$Result$Err(msg));
+		});
+};
+var _elm_lang$core$Task$fromResult = function (result) {
+	var _p6 = result;
+	if (_p6.ctor === 'Ok') {
+		return _elm_lang$core$Task$succeed(_p6._0);
+	} else {
+		return _elm_lang$core$Task$fail(_p6._0);
+	}
+};
+var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
+	{ctor: '_Tuple0'});
+var _elm_lang$core$Task$onSelfMsg = F3(
+	function (_p9, _p8, _p7) {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '_Tuple0'});
+	});
+var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
+var _elm_lang$core$Task$T = function (a) {
+	return {ctor: 'T', _0: a};
+};
+var _elm_lang$core$Task$perform = F3(
+	function (onFail, onSuccess, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$T(
+				A2(
+					_elm_lang$core$Task$onError,
+					A2(_elm_lang$core$Task$map, onSuccess, task),
+					function (x) {
+						return _elm_lang$core$Task$succeed(
+							onFail(x));
+					})));
+	});
+var _elm_lang$core$Task$cmdMap = F2(
+	function (tagger, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Task$T(
+			A2(_elm_lang$core$Task$map, tagger, _p11._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Debug = function() {
@@ -4840,12 +5073,228 @@ var _elm_lang$core$Dict$diff = F2(
 			t2);
 	});
 
+//import Native.Scheduler //
+
+var _elm_lang$core$Native_Time = function() {
+
+var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+{
+	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+});
+
+function setInterval_(interval, task)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = setInterval(function() {
+			_elm_lang$core$Native_Scheduler.rawSpawn(task);
+		}, interval);
+
+		return function() { clearInterval(id); };
+	});
+}
+
+return {
+	now: now,
+	setInterval_: F2(setInterval_)
+};
+
+}();
 var _elm_lang$core$Platform_Sub$batch = _elm_lang$core$Native_Platform.batch;
 var _elm_lang$core$Platform_Sub$none = _elm_lang$core$Platform_Sub$batch(
 	_elm_lang$core$Native_List.fromArray(
 		[]));
 var _elm_lang$core$Platform_Sub$map = _elm_lang$core$Native_Platform.map;
 var _elm_lang$core$Platform_Sub$Sub = {ctor: 'Sub'};
+
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+var _elm_lang$core$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		var _p0 = intervals;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(processes);
+		} else {
+			var _p1 = _p0._0;
+			return A2(
+				_elm_lang$core$Task$andThen,
+				_elm_lang$core$Native_Scheduler.spawn(
+					A2(
+						_elm_lang$core$Time$setInterval,
+						_p1,
+						A2(_elm_lang$core$Platform$sendToSelf, router, _p1))),
+				function (id) {
+					return A3(
+						_elm_lang$core$Time$spawnHelp,
+						router,
+						_p0._1,
+						A3(_elm_lang$core$Dict$insert, _p1, id, processes));
+				});
+		}
+	});
+var _elm_lang$core$Time$addMySub = F2(
+	function (_p2, state) {
+		var _p3 = _p2;
+		var _p6 = _p3._1;
+		var _p5 = _p3._0;
+		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
+		if (_p4.ctor === 'Nothing') {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				_elm_lang$core$Native_List.fromArray(
+					[_p6]),
+				state);
+		} else {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				A2(_elm_lang$core$List_ops['::'], _p6, _p4._0),
+				state);
+		}
+	});
+var _elm_lang$core$Time$inMilliseconds = function (t) {
+	return t;
+};
+var _elm_lang$core$Time$millisecond = 1;
+var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
+var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
+var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
+var _elm_lang$core$Time$inHours = function (t) {
+	return t / _elm_lang$core$Time$hour;
+};
+var _elm_lang$core$Time$inMinutes = function (t) {
+	return t / _elm_lang$core$Time$minute;
+};
+var _elm_lang$core$Time$inSeconds = function (t) {
+	return t / _elm_lang$core$Time$second;
+};
+var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
+var _elm_lang$core$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			return A2(
+				_elm_lang$core$Task$andThen,
+				_elm_lang$core$Time$now,
+				function (time) {
+					return A2(
+						_elm_lang$core$Task$andThen,
+						_elm_lang$core$Task$sequence(
+							A2(
+								_elm_lang$core$List$map,
+								function (tagger) {
+									return A2(
+										_elm_lang$core$Platform$sendToApp,
+										router,
+										tagger(time));
+								},
+								_p7._0)),
+						function (_p8) {
+							return _elm_lang$core$Task$succeed(state);
+						});
+				});
+		}
+	});
+var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
+var _elm_lang$core$Time$State = F2(
+	function (a, b) {
+		return {taggers: a, processes: b};
+	});
+var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
+	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$core$Time$onEffects = F3(
+	function (router, subs, _p9) {
+		var _p10 = _p9;
+		var rightStep = F3(
+			function (_p12, id, _p11) {
+				var _p13 = _p11;
+				return {
+					ctor: '_Tuple3',
+					_0: _p13._0,
+					_1: _p13._1,
+					_2: A2(
+						_elm_lang$core$Task$andThen,
+						_elm_lang$core$Native_Scheduler.kill(id),
+						function (_p14) {
+							return _p13._2;
+						})
+				};
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _p15) {
+				var _p16 = _p15;
+				return {
+					ctor: '_Tuple3',
+					_0: _p16._0,
+					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
+					_2: _p16._2
+				};
+			});
+		var leftStep = F3(
+			function (interval, taggers, _p17) {
+				var _p18 = _p17;
+				return {
+					ctor: '_Tuple3',
+					_0: A2(_elm_lang$core$List_ops['::'], interval, _p18._0),
+					_1: _p18._1,
+					_2: _p18._2
+				};
+			});
+		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
+		var _p19 = A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			_p10.processes,
+			{
+				ctor: '_Tuple3',
+				_0: _elm_lang$core$Native_List.fromArray(
+					[]),
+				_1: _elm_lang$core$Dict$empty,
+				_2: _elm_lang$core$Task$succeed(
+					{ctor: '_Tuple0'})
+			});
+		var spawnList = _p19._0;
+		var existingDict = _p19._1;
+		var killTask = _p19._2;
+		return A2(
+			_elm_lang$core$Task$andThen,
+			killTask,
+			function (_p20) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict),
+					function (newProcesses) {
+						return _elm_lang$core$Task$succeed(
+							A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
+					});
+			});
+	});
+var _elm_lang$core$Time$Every = F2(
+	function (a, b) {
+		return {ctor: 'Every', _0: a, _1: b};
+	});
+var _elm_lang$core$Time$every = F2(
+	function (interval, tagger) {
+		return _elm_lang$core$Time$subscription(
+			A2(_elm_lang$core$Time$Every, interval, tagger));
+	});
+var _elm_lang$core$Time$subMap = F2(
+	function (f, _p21) {
+		var _p22 = _p21;
+		return A2(
+			_elm_lang$core$Time$Every,
+			_p22._0,
+			function (_p23) {
+				return f(
+					_p22._1(_p23));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
 
 var _elm_lang$core$Debug$crash = _elm_lang$core$Native_Debug.crash;
 var _elm_lang$core$Debug$log = _elm_lang$core$Native_Debug.log;
@@ -7219,6 +7668,77 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Main$calculateScrollTop = F2(
+	function (model, scrollTop) {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{scrollTop: scrollTop});
+	});
+var _user$project$Main$styleTa = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+			{ctor: '_Tuple2', _0: 'left', _1: '30px'}
+		]));
+var _user$project$Main$scrollTop = A2(
+	_elm_lang$core$Json_Decode$at,
+	_elm_lang$core$Native_List.fromArray(
+		['target', 'scrollTop']),
+	_elm_lang$core$Json_Decode$int);
+var _user$project$Main$onScroll = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'scroll',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _user$project$Main$scrollTop));
+};
+var _user$project$Main$onMouseOver = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _user$project$Main$scrollTop));
+};
+var _user$project$Main$styleLo = function (model) {
+	var scrollTop = (model.scrollTop * -1) + 2;
+	return _elm_lang$html$Html_Attributes$style(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+				{ctor: '_Tuple2', _0: 'left', _1: '0px'},
+				{ctor: '_Tuple2', _0: 'width', _1: '20px'},
+				{ctor: '_Tuple2', _0: 'textAlign', _1: 'center'},
+				{
+				ctor: '_Tuple2',
+				_0: 'top',
+				_1: A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(scrollTop),
+					'px')
+			}
+			]));
+};
+var _user$project$Main$styleEl = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'width', _1: '352px'},
+			{ctor: '_Tuple2', _0: 'height', _1: '290px'},
+			{ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
+			{ctor: '_Tuple2', _0: 'position', _1: 'relative'}
+		]));
+var _user$project$Main$string = F2(
+	function (n, total) {
+		var _p0 = _elm_lang$core$Native_Utils.eq(n, 1);
+		if (_p0 === true) {
+			return _elm_lang$core$Basics$toString((total + 1) - n);
+		} else {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString((total + 1) - n),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'\n',
+					A2(_user$project$Main$string, n - 1, total)));
+		}
+	});
 var _user$project$Main$separate = function (s) {
 	return _elm_lang$core$List$concat(
 		A2(
@@ -7240,13 +7760,18 @@ var _user$project$Main$model = {
 	field: '',
 	error: false,
 	errorMsg: '',
-	finished: false
+	finished: false,
+	running: false,
+	time: 0,
+	speed: 1,
+	scrollTop: 0
 };
-var _user$project$Main$init = _user$project$Main$model;
+var _user$project$Main$initmodel = _user$project$Main$model;
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$ramPut = F3(
 	function (v, n, segment) {
-		var _p0 = n;
-		if (_p0 === 0) {
+		var _p1 = n;
+		if (_p1 === 0) {
 			return A2(_elm_lang$core$List_ops['::'], v, segment);
 		} else {
 			return A2(
@@ -7260,8 +7785,8 @@ var _user$project$Main$ramPut = F3(
 	});
 var _user$project$Main$ramGet = F2(
 	function (n, segment) {
-		var _p1 = n;
-		if (_p1 === 0) {
+		var _p2 = n;
+		if (_p2 === 0) {
 			return _elm_lang$core$List$head(segment);
 		} else {
 			return _elm_lang$core$List$head(
@@ -7271,16 +7796,16 @@ var _user$project$Main$ramGet = F2(
 var _user$project$Main$getInstruction = F2(
 	function (a, text) {
 		var instruction = A2(_user$project$Main$ramGet, a, text);
-		var _p2 = instruction;
-		if ((_p2.ctor === 'Just') && (_p2._0.ctor === 'Just')) {
-			return _elm_lang$core$Maybe$Just(_p2._0._0);
+		var _p3 = instruction;
+		if ((_p3.ctor === 'Just') && (_p3._0.ctor === 'Just')) {
+			return _elm_lang$core$Maybe$Just(_p3._0._0);
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
 var _user$project$Main$string_of_int = function (n) {
-	var _p3 = n;
-	if (_p3.ctor === 'Just') {
+	var _p4 = n;
+	if (_p4.ctor === 'Just') {
 		return 'n';
 	} else {
 		return 'Not a number';
@@ -7288,8 +7813,8 @@ var _user$project$Main$string_of_int = function (n) {
 };
 var _user$project$Main$registerPut = F3(
 	function (value, dest, r) {
-		var _p4 = dest;
-		switch (_p4.ctor) {
+		var _p5 = dest;
+		switch (_p5.ctor) {
 			case 'R0':
 				return _elm_lang$core$Native_Utils.update(
 					r,
@@ -7312,8 +7837,8 @@ var _user$project$Main$registerPut = F3(
 	});
 var _user$project$Main$registerGet = F2(
 	function (register, r) {
-		var _p5 = register;
-		switch (_p5.ctor) {
+		var _p6 = register;
+		switch (_p6.ctor) {
 			case 'R0':
 				return r.r0;
 			case 'R1':
@@ -7327,9 +7852,9 @@ var _user$project$Main$registerGet = F2(
 		}
 	});
 var _user$project$Main$string_of_reg = function (r) {
-	var _p6 = r;
-	if (_p6.ctor === 'Just') {
-		switch (_p6._0.ctor) {
+	var _p7 = r;
+	if (_p7.ctor === 'Just') {
+		switch (_p7._0.ctor) {
 			case 'R0':
 				return 'R0';
 			case 'R1':
@@ -7348,27 +7873,27 @@ var _user$project$Main$string_of_reg = function (r) {
 var _user$project$Main$string_of_instruction = function (i) {
 	var si = _user$project$Main$string_of_int;
 	var sr = _user$project$Main$string_of_reg;
-	var _p7 = i;
-	switch (_p7.ctor) {
+	var _p8 = i;
+	switch (_p8.ctor) {
 		case 'Lod':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Lod\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							si(_p7._0.offset),
+							si(_p8._0.offset),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'(',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									sr(_p7._0.rs),
+									sr(_p8._0.rs),
 									')'))))));
 		case 'Li':
 			return A2(
@@ -7376,30 +7901,30 @@ var _user$project$Main$string_of_instruction = function (i) {
 				'Li\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						si(_p7._0.number))));
+						si(_p8._0.number))));
 		case 'Sto':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Sto\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rs),
+					sr(_p8._0.rs),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							si(_p7._0.offset),
+							si(_p8._0.offset),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'(',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									sr(_p7._0.rd),
+									sr(_p8._0.rd),
 									')'))))));
 		case 'Mov':
 			return A2(
@@ -7407,115 +7932,115 @@ var _user$project$Main$string_of_instruction = function (i) {
 				'Mov\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						sr(_p7._0.rs))));
+						sr(_p8._0.rs))));
 		case 'Add':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Add\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p7._0.rs),
+							sr(_p8._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p7._0.rt))))));
+								sr(_p8._0.rt))))));
 		case 'Sub':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Sub\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p7._0.rs),
+							sr(_p8._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p7._0.rt))))));
+								sr(_p8._0.rt))))));
 		case 'Mul':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Mul\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p7._0.rs),
+							sr(_p8._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p7._0.rt))))));
+								sr(_p8._0.rt))))));
 		case 'Div':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Div\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rd),
+					sr(_p8._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p7._0.rs),
+							sr(_p8._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p7._0.rt))))));
+								sr(_p8._0.rt))))));
 		case 'Cmp':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Cmp\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p7._0.rs),
+					sr(_p8._0.rs),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						sr(_p7._0.rt))));
+						sr(_p8._0.rt))));
 		case 'Blt':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Blt\t',
-				si(_p7._0));
+				si(_p8._0));
 		case 'Beq':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Beq\t',
-				si(_p7._0));
+				si(_p8._0));
 		case 'Bgt':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Bgt\t',
-				si(_p7._0));
+				si(_p8._0));
 		case 'Jmp':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Jmp\t',
-				si(_p7._0));
+				si(_p8._0));
 		case 'Jsr':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Jsr\t',
-				si(_p7._0));
+				si(_p8._0));
 		case 'R':
 			return 'R';
 		default:
@@ -7589,18 +8114,18 @@ var _user$project$Main$cycle = function (model) {
 	var newpc = pc + 1;
 	var registers = model.registers;
 	var instruction = A2(_user$project$Main$getInstruction, model.pc, model.image.text);
-	var _p8 = instruction;
-	if (_p8.ctor === 'Just') {
-		switch (_p8._0.ctor) {
+	var _p9 = instruction;
+	if (_p9.ctor === 'Just') {
+		switch (_p9._0.ctor) {
 			case 'Lod':
-				var _p9 = {ctor: '_Tuple3', _0: _p8._0._0.rd, _1: _p8._0._0.offset, _2: _p8._0._0.rs};
-				if ((((_p9.ctor === '_Tuple3') && (_p9._0.ctor === 'Just')) && (_p9._1.ctor === 'Just')) && (_p9._2.ctor === 'Just')) {
-					var addr = _p9._1._0 + A2(_user$project$Main$registerGet, _p9._2._0, registers);
+				var _p10 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.offset, _2: _p9._0._0.rs};
+				if ((((_p10.ctor === '_Tuple3') && (_p10._0.ctor === 'Just')) && (_p10._1.ctor === 'Just')) && (_p10._2.ctor === 'Just')) {
+					var addr = _p10._1._0 + A2(_user$project$Main$registerGet, _p10._2._0, registers);
 					var value = A2(
 						_elm_lang$core$Maybe$withDefault,
 						0,
 						A2(_user$project$Main$ramGet, addr, img.data));
-					var newRegisters = A3(_user$project$Main$registerPut, value, _p9._0._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, value, _p10._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7616,9 +8141,9 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Li':
-				var _p10 = {ctor: '_Tuple2', _0: _p8._0._0.rd, _1: _p8._0._0.number};
-				if (((_p10.ctor === '_Tuple2') && (_p10._0.ctor === 'Just')) && (_p10._1.ctor === 'Just')) {
-					var newRegisters = A3(_user$project$Main$registerPut, _p10._1._0, _p10._0._0, registers);
+				var _p11 = {ctor: '_Tuple2', _0: _p9._0._0.rd, _1: _p9._0._0.number};
+				if (((_p11.ctor === '_Tuple2') && (_p11._0.ctor === 'Just')) && (_p11._1.ctor === 'Just')) {
+					var newRegisters = A3(_user$project$Main$registerPut, _p11._1._0, _p11._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7634,11 +8159,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Sto':
-				var _p11 = {ctor: '_Tuple3', _0: _p8._0._0.rs, _1: _p8._0._0.offset, _2: _p8._0._0.rd};
-				if ((((_p11.ctor === '_Tuple3') && (_p11._0.ctor === 'Just')) && (_p11._1.ctor === 'Just')) && (_p11._2.ctor === 'Just')) {
-					var _p12 = _p11._0._0;
-					var value = A2(_user$project$Main$registerGet, _p12, registers);
-					var addr = _p11._1._0 + A2(_user$project$Main$registerGet, _p12, registers);
+				var _p12 = {ctor: '_Tuple3', _0: _p9._0._0.rs, _1: _p9._0._0.offset, _2: _p9._0._0.rd};
+				if ((((_p12.ctor === '_Tuple3') && (_p12._0.ctor === 'Just')) && (_p12._1.ctor === 'Just')) && (_p12._2.ctor === 'Just')) {
+					var _p13 = _p12._0._0;
+					var value = A2(_user$project$Main$registerGet, _p13, registers);
+					var addr = _p12._1._0 + A2(_user$project$Main$registerGet, _p13, registers);
 					var newData = A3(_user$project$Main$ramPut, value, addr, img.data);
 					var newImage = {text: img.text, data: newData};
 					return _elm_lang$core$Native_Utils.update(
@@ -7656,10 +8181,10 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Mov':
-				var _p13 = {ctor: '_Tuple2', _0: _p8._0._0.rd, _1: _p8._0._0.rs};
-				if (((_p13.ctor === '_Tuple2') && (_p13._0.ctor === 'Just')) && (_p13._1.ctor === 'Just')) {
-					var v = A2(_user$project$Main$registerGet, _p13._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v, _p13._0._0, registers);
+				var _p14 = {ctor: '_Tuple2', _0: _p9._0._0.rd, _1: _p9._0._0.rs};
+				if (((_p14.ctor === '_Tuple2') && (_p14._0.ctor === 'Just')) && (_p14._1.ctor === 'Just')) {
+					var v = A2(_user$project$Main$registerGet, _p14._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v, _p14._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7675,11 +8200,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Add':
-				var _p14 = {ctor: '_Tuple3', _0: _p8._0._0.rd, _1: _p8._0._0.rs, _2: _p8._0._0.rt};
-				if ((((_p14.ctor === '_Tuple3') && (_p14._0.ctor === 'Just')) && (_p14._1.ctor === 'Just')) && (_p14._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p14._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p14._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 + v2, _p14._0._0, registers);
+				var _p15 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
+				if ((((_p15.ctor === '_Tuple3') && (_p15._0.ctor === 'Just')) && (_p15._1.ctor === 'Just')) && (_p15._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p15._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p15._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 + v2, _p15._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7695,11 +8220,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Sub':
-				var _p15 = {ctor: '_Tuple3', _0: _p8._0._0.rd, _1: _p8._0._0.rs, _2: _p8._0._0.rt};
-				if ((((_p15.ctor === '_Tuple3') && (_p15._0.ctor === 'Just')) && (_p15._1.ctor === 'Just')) && (_p15._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p15._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p15._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 - v2, _p15._0._0, registers);
+				var _p16 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
+				if ((((_p16.ctor === '_Tuple3') && (_p16._0.ctor === 'Just')) && (_p16._1.ctor === 'Just')) && (_p16._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p16._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p16._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 - v2, _p16._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7715,11 +8240,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Mul':
-				var _p16 = {ctor: '_Tuple3', _0: _p8._0._0.rd, _1: _p8._0._0.rs, _2: _p8._0._0.rt};
-				if ((((_p16.ctor === '_Tuple3') && (_p16._0.ctor === 'Just')) && (_p16._1.ctor === 'Just')) && (_p16._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p16._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p16._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 * v2, _p16._0._0, registers);
+				var _p17 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
+				if ((((_p17.ctor === '_Tuple3') && (_p17._0.ctor === 'Just')) && (_p17._1.ctor === 'Just')) && (_p17._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p17._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p17._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 * v2, _p17._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7735,11 +8260,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Div':
-				var _p17 = {ctor: '_Tuple3', _0: _p8._0._0.rd, _1: _p8._0._0.rs, _2: _p8._0._0.rt};
-				if ((((_p17.ctor === '_Tuple3') && (_p17._0.ctor === 'Just')) && (_p17._1.ctor === 'Just')) && (_p17._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p17._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p17._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, (v1 / v2) | 0, _p17._0._0, registers);
+				var _p18 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
+				if ((((_p18.ctor === '_Tuple3') && (_p18._0.ctor === 'Just')) && (_p18._1.ctor === 'Just')) && (_p18._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p18._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p18._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, (v1 / v2) | 0, _p18._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -7755,10 +8280,10 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Cmp':
-				var _p18 = {ctor: '_Tuple2', _0: _p8._0._0.rs, _1: _p8._0._0.rt};
-				if (((_p18.ctor === '_Tuple2') && (_p18._0.ctor === 'Just')) && (_p18._1.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p18._1._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p18._0._0, registers);
+				var _p19 = {ctor: '_Tuple2', _0: _p9._0._0.rs, _1: _p9._0._0.rt};
+				if (((_p19.ctor === '_Tuple2') && (_p19._0.ctor === 'Just')) && (_p19._1.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p19._1._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p19._0._0, registers);
 					var value = v1 - v2;
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -7775,13 +8300,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Blt':
-				var _p19 = _p8._0._0;
-				if (_p19.ctor === 'Just') {
-					var _p20 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
-					if (_p20 === true) {
+				var _p20 = _p9._0._0;
+				if (_p20.ctor === 'Just') {
+					var _p21 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
+					if (_p21 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p19._0});
+							{pc: newpc + _p20._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7799,13 +8324,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Beq':
-				var _p21 = _p8._0._0;
-				if (_p21.ctor === 'Just') {
-					var _p22 = _elm_lang$core$Native_Utils.eq(psw, 0);
-					if (_p22 === true) {
+				var _p22 = _p9._0._0;
+				if (_p22.ctor === 'Just') {
+					var _p23 = _elm_lang$core$Native_Utils.eq(psw, 0);
+					if (_p23 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p21._0});
+							{pc: newpc + _p22._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7823,13 +8348,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Bgt':
-				var _p23 = _p8._0._0;
-				if (_p23.ctor === 'Just') {
-					var _p24 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
-					if (_p24 === true) {
+				var _p24 = _p9._0._0;
+				if (_p24.ctor === 'Just') {
+					var _p25 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
+					if (_p25 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p23._0});
+							{pc: newpc + _p24._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -7847,11 +8372,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Jmp':
-				var _p25 = _p8._0._0;
-				if (_p25.ctor === 'Just') {
+				var _p26 = _p9._0._0;
+				if (_p26.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: newpc + _p25._0});
+						{pc: newpc + _p26._0});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -7864,11 +8389,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Jsr':
-				var _p26 = _p8._0._0;
-				if (_p26.ctor === 'Just') {
+				var _p27 = _p9._0._0;
+				if (_p27.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: newpc + _p26._0, ra: newpc});
+						{pc: newpc + _p27._0, ra: newpc});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -7885,7 +8410,7 @@ var _user$project$Main$cycle = function (model) {
 					model,
 					{pc: ra});
 			default:
-				var _p27 = {
+				var _p28 = {
 					ctor: '_Tuple2',
 					_0: A2(
 						_elm_lang$core$Debug$log,
@@ -7895,7 +8420,7 @@ var _user$project$Main$cycle = function (model) {
 				};
 				return _elm_lang$core$Native_Utils.update(
 					model,
-					{pc: newpc, errorMsg: 'SVM Halt', finished: true});
+					{pc: newpc, errorMsg: 'SVM Halt', finished: true, running: false});
 		}
 	} else {
 		return A2(
@@ -7916,15 +8441,15 @@ var _user$project$Main$svm = function (model) {
 	svm:
 	while (true) {
 		var instruction = A2(_user$project$Main$getInstruction, model.pc, model.image.text);
-		var _p28 = instruction;
-		if ((_p28.ctor === 'Just') && (_p28._0.ctor === 'Hlt')) {
+		var _p29 = instruction;
+		if ((_p29.ctor === 'Just') && (_p29._0.ctor === 'Hlt')) {
 			return _user$project$Main$cycle(model);
 		} else {
-			var _p29 = model.error;
-			if (_p29 === false) {
+			var _p30 = model.error;
+			if (_p30 === false) {
 				var newModel = _user$project$Main$cycle(model);
-				var _v28 = newModel;
-				model = _v28;
+				var _v29 = newModel;
+				model = _v29;
 				continue svm;
 			} else {
 				return model;
@@ -7940,18 +8465,41 @@ var _user$project$Main$Image = F2(
 	function (a, b) {
 		return {data: a, text: b};
 	});
-var _user$project$Main$Model = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {registers: a, pc: b, ra: c, psw: d, image: e, field: f, error: g, errorMsg: h, finished: i};
-	});
+var _user$project$Main$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return function (l) {
+												return function (m) {
+													return {registers: a, pc: b, ra: c, psw: d, image: e, field: f, error: g, errorMsg: h, finished: i, running: j, time: k, speed: l, scrollTop: m};
+												};
+											};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _user$project$Main$Zero = {ctor: 'Zero'};
 var _user$project$Main$R3 = {ctor: 'R3'};
 var _user$project$Main$R2 = {ctor: 'R2'};
 var _user$project$Main$R1 = {ctor: 'R1'};
 var _user$project$Main$R0 = {ctor: 'R0'};
 var _user$project$Main$reg_of_string = function (s) {
-	var _p30 = s;
-	switch (_p30) {
+	var _p31 = s;
+	switch (_p31) {
 		case 'R0':
 			return _elm_lang$core$Maybe$Just(_user$project$Main$R0);
 		case 'R1':
@@ -8011,153 +8559,158 @@ var _user$project$Main$Lod = function (a) {
 	return {ctor: 'Lod', _0: a};
 };
 var _user$project$Main$processCode = function (s) {
-	var _p31 = s;
-	_v30_16:
+	var _p32 = s;
+	_v31_16:
 	do {
-		if (_p31.ctor === '::') {
-			if (_p31._1.ctor === '::') {
-				if (_p31._1._1.ctor === '::') {
-					if (_p31._1._1._1.ctor === '::') {
-						if (_p31._1._1._1._1.ctor === '[]') {
-							switch (_p31._0) {
+		if (_p32.ctor === '::') {
+			if (_p32._1.ctor === '::') {
+				if (_p32._1._1.ctor === '::') {
+					if (_p32._1._1._1.ctor === '::') {
+						if (_p32._1._1._1._1.ctor === '[]') {
+							switch (_p32._0) {
 								case 'LOD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Lod(
 											{
-												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rd: _user$project$Main$reg_of_string(_p32._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p31._1._1._0)),
-												rs: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+													_elm_lang$core$String$toInt(_p32._1._1._0)),
+												rs: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								case 'STO':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sto(
 											{
-												rs: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p32._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p31._1._1._0)),
-												rd: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+													_elm_lang$core$String$toInt(_p32._1._1._0)),
+												rd: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								case 'ADD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Add(
 											{
-												rd: _user$project$Main$reg_of_string(_p31._1._0),
-												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p32._1._0),
+												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								case 'SUB':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sub(
 											{
-												rd: _user$project$Main$reg_of_string(_p31._1._0),
-												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p32._1._0),
+												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								case 'MUL':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Mul(
 											{
-												rd: _user$project$Main$reg_of_string(_p31._1._0),
-												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p32._1._0),
+												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								case 'DIV':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Div(
 											{
-												rd: _user$project$Main$reg_of_string(_p31._1._0),
-												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p32._1._0),
+												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
 											}));
 								default:
-									break _v30_16;
+									break _v31_16;
 							}
 						} else {
-							break _v30_16;
+							break _v31_16;
 						}
 					} else {
-						switch (_p31._0) {
+						switch (_p32._0) {
 							case 'LI':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Li(
 										{
-											rd: _user$project$Main$reg_of_string(_p31._1._0),
+											rd: _user$project$Main$reg_of_string(_p32._1._0),
 											number: _elm_lang$core$Result$toMaybe(
-												_elm_lang$core$String$toInt(_p31._1._1._0))
+												_elm_lang$core$String$toInt(_p32._1._1._0))
 										}));
 							case 'MOV':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Mov(
 										{
-											rd: _user$project$Main$reg_of_string(_p31._1._0),
-											rs: _user$project$Main$reg_of_string(_p31._1._1._0)
+											rd: _user$project$Main$reg_of_string(_p32._1._0),
+											rs: _user$project$Main$reg_of_string(_p32._1._1._0)
 										}));
 							case 'CMP':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Cmp(
 										{
-											rs: _user$project$Main$reg_of_string(_p31._1._0),
-											rt: _user$project$Main$reg_of_string(_p31._1._1._0)
+											rs: _user$project$Main$reg_of_string(_p32._1._0),
+											rt: _user$project$Main$reg_of_string(_p32._1._1._0)
 										}));
 							default:
-								break _v30_16;
+								break _v31_16;
 						}
 					}
 				} else {
-					switch (_p31._0) {
+					switch (_p32._0) {
 						case 'BLT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Blt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p31._1._0))));
+										_elm_lang$core$String$toInt(_p32._1._0))));
 						case 'BEQ':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Beq(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p31._1._0))));
+										_elm_lang$core$String$toInt(_p32._1._0))));
 						case 'BGT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Bgt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p31._1._0))));
+										_elm_lang$core$String$toInt(_p32._1._0))));
 						case 'JMP':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jmp(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p31._1._0))));
+										_elm_lang$core$String$toInt(_p32._1._0))));
 						case 'JSR':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jsr(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p31._1._0))));
+										_elm_lang$core$String$toInt(_p32._1._0))));
 						default:
-							break _v30_16;
+							break _v31_16;
 					}
 				}
 			} else {
-				switch (_p31._0) {
+				switch (_p32._0) {
 					case 'R':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$R);
 					case 'HLT':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$Hlt);
 					default:
-						break _v30_16;
+						break _v31_16;
 				}
 			}
 		} else {
-			break _v30_16;
+			break _v31_16;
 		}
 	} while(false);
 	return _elm_lang$core$Maybe$Nothing;
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p32 = msg;
-		switch (_p32.ctor) {
+		var _p33 = msg;
+		switch (_p33.ctor) {
 			case 'Step':
-				return _user$project$Main$cycle(model);
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Main$cycle(model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'Instructions':
+				var _p35 = _p33._0;
 				var text = A2(
 					_elm_lang$core$List$map,
 					_user$project$Main$processCode,
@@ -8165,15 +8718,16 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$List$map,
 						_user$project$Main$separate,
 						_elm_lang$core$String$lines(
-							_elm_lang$core$String$toUpper(_p32._0))));
-				var _p33 = A2(
+							_elm_lang$core$String$toUpper(_p35))));
+				var _p34 = A2(
 					_elm_lang$core$Debug$log,
 					_elm_lang$core$Basics$toString(text),
 					{ctor: '_Tuple0'});
 				var newImage = {text: text, data: model.image.data};
-				return _elm_lang$core$Native_Utils.update(
+				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
-					{image: newImage});
+					{image: newImage, field: _p35});
+				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'RAM':
 				var data = A2(
 					_elm_lang$core$List$map,
@@ -8181,19 +8735,81 @@ var _user$project$Main$update = F2(
 					A2(
 						_elm_lang$core$List$map,
 						_elm_lang$core$String$toInt,
-						_user$project$Main$separate(_p32._0)));
+						_user$project$Main$separate(_p33._0)));
 				var newImage = {text: model.image.text, data: data};
-				return _elm_lang$core$Native_Utils.update(
+				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{image: newImage});
+				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Run':
-				return _user$project$Main$svm(model);
+				var newModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{running: true});
+				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Reset':
+				var newModel = _elm_lang$core$Native_Utils.update(
+					_user$project$Main$initmodel,
+					{field: model.field, image: model.image, speed: model.speed});
+				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'UpdateTime':
+				return _elm_lang$core$Native_Utils.eq(model.running, true) ? {
+					ctor: '_Tuple2',
+					_0: _user$project$Main$cycle(model),
+					_1: _elm_lang$core$Platform_Cmd$none
+				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'SetSpeed':
+				return A2(
+					_elm_lang$core$Debug$log,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Current speed is',
+						_elm_lang$core$Basics$toString(model.speed)),
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								speed: A2(
+									_elm_lang$core$Result$withDefault,
+									1,
+									_elm_lang$core$String$toFloat(_p33._0))
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					});
+			case 'Stop':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{running: false, errorMsg: 'SVM Halt'}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			default:
-				return _elm_lang$core$Native_Utils.update(
-					_user$project$Main$init,
-					{image: model.image});
+				return A2(
+					_elm_lang$core$Debug$log,
+					'HELLO',
+					{
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{scrollTop: _p33._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					});
 		}
 	});
+var _user$project$Main$Position = function (a) {
+	return {ctor: 'Position', _0: a};
+};
+var _user$project$Main$Stop = {ctor: 'Stop'};
+var _user$project$Main$SetSpeed = function (a) {
+	return {ctor: 'SetSpeed', _0: a};
+};
+var _user$project$Main$UpdateTime = function (a) {
+	return {ctor: 'UpdateTime', _0: a};
+};
+var _user$project$Main$subs = function (model) {
+	return A2(_elm_lang$core$Time$every, model.speed * _elm_lang$core$Time$second, _user$project$Main$UpdateTime);
+};
 var _user$project$Main$Reset = {ctor: 'Reset'};
 var _user$project$Main$Step = {ctor: 'Step'};
 var _user$project$Main$RAM = function (a) {
@@ -8203,6 +8819,54 @@ var _user$project$Main$Run = {ctor: 'Run'};
 var _user$project$Main$Instructions = function (a) {
 	return {ctor: 'Instructions', _0: a};
 };
+var _user$project$Main$createTextAreaWithLines = F2(
+	function (model, id) {
+		return A2(
+			_elm_lang$html$Html$div,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('textAreaWithLines'),
+					_user$project$Main$styleEl
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('lineObj'),
+							_user$project$Main$styleLo(model)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(
+							A2(_user$project$Main$string, 1000, 1000))
+						])),
+					A2(
+					_elm_lang$html$Html$textarea,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_user$project$Main$styleTa,
+							A2(
+							_elm_lang$html$Html_Events$on,
+							'keyDown',
+							_elm_lang$core$Json_Decode$succeed(
+								_user$project$Main$Position(model.scrollTop))),
+							_elm_lang$html$Html_Events$onMouseDown(
+							_user$project$Main$Position(model.scrollTop)),
+							_user$project$Main$onScroll(_user$project$Main$Position),
+							_elm_lang$html$Html_Events$onBlur(
+							_user$project$Main$Position(model.scrollTop)),
+							_elm_lang$html$Html_Events$onFocus(
+							_user$project$Main$Position(model.scrollTop)),
+							_user$project$Main$onMouseOver(_user$project$Main$Position),
+							_elm_lang$html$Html_Events$onInput(_user$project$Main$Instructions),
+							_elm_lang$html$Html_Attributes$class('input_instruction')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[]))
+				]));
+	});
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8284,35 +8948,13 @@ var _user$project$Main$view = function (model) {
 									[
 										_elm_lang$html$Html$text('Instructions')
 									])),
+								A2(_user$project$Main$createTextAreaWithLines, model, 'input_instruction'),
 								A2(
-								_elm_lang$html$Html$div,
+								_elm_lang$html$Html$br,
 								_elm_lang$core$Native_List.fromArray(
 									[]),
 								_elm_lang$core$Native_List.fromArray(
-									[
-										A2(
-										_elm_lang$html$Html$textarea,
-										_elm_lang$core$Native_List.fromArray(
-											[
-												_elm_lang$html$Html_Events$onInput(_user$project$Main$Instructions),
-												_elm_lang$html$Html_Attributes$class('instruction')
-											]),
-										_elm_lang$core$Native_List.fromArray(
-											[]))
-									])),
-								A2(
-								_elm_lang$html$Html$p,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text(
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'Number of lines = ',
-											_elm_lang$core$Basics$toString(
-												_elm_lang$core$List$length(model.image.text))))
-									])),
+									[])),
 								A2(
 								_elm_lang$html$Html$div,
 								_elm_lang$core$Native_List.fromArray(
@@ -8351,12 +8993,25 @@ var _user$project$Main$view = function (model) {
 											[
 												_elm_lang$html$Html_Events$onClick(_user$project$Main$Reset),
 												_elm_lang$html$Html_Attributes$disabled(
-												_elm_lang$core$Native_Utils.eq(model, _user$project$Main$init)),
+												_elm_lang$core$Native_Utils.eq(model, _user$project$Main$initmodel)),
 												_elm_lang$html$Html_Attributes$class('button3')
 											]),
 										_elm_lang$core$Native_List.fromArray(
 											[
 												_elm_lang$html$Html$text('Reset')
+											])),
+										A2(
+										_elm_lang$html$Html$button,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onClick(_user$project$Main$Stop),
+												_elm_lang$html$Html_Attributes$disabled(
+												_elm_lang$core$Native_Utils.eq(model, _user$project$Main$initmodel)),
+												_elm_lang$html$Html_Attributes$class('button4')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html$text('Stop')
 											]))
 									]))
 							])),
@@ -8368,6 +9023,24 @@ var _user$project$Main$view = function (model) {
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
+								A2(
+								_elm_lang$html$Html$p,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Processing speed = '),
+										A2(
+										_elm_lang$html$Html$input,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onInput(_user$project$Main$SetSpeed),
+												_elm_lang$html$Html_Attributes$class('speed')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[])),
+										_elm_lang$html$Html$text('sec per instruction')
+									])),
 								A2(
 								_elm_lang$html$Html$div,
 								_elm_lang$core$Native_List.fromArray(
@@ -8492,8 +9165,8 @@ var _user$project$Main$view = function (model) {
 			]));
 };
 var _user$project$Main$main = {
-	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: _user$project$Main$model, update: _user$project$Main$update, view: _user$project$Main$view})
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$Main$init, update: _user$project$Main$update, view: _user$project$Main$view, subscriptions: _user$project$Main$subs})
 };
 
 var Elm = {};
