@@ -166,7 +166,7 @@ button:disabled {
     float: right;
     font-size:18px;
     line-height: 1.4em;
-
+    background-color: #f5f5f5;
 }
 
 .line {
