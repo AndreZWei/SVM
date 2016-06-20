@@ -1,6 +1,6 @@
 # SVM
 
-You can try it <a href="https://cdn.rawgit.com/AndreZWei/SVM/master/demo.html"> here </a>.
+You can try it <a href="https://cdn.rawgit.com/AndreZWei/SVM/master/demo.html">here</a>.
 
 This is a simple virtual machine implemented by Elm.
 
