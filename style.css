@@ -24,7 +24,7 @@ body {
     line-height: 1.4em;
     background: lightblue;
     color: #4d4d4d;
-    max-width: 1000px;
+    max-width: 800px;
     max-height: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -99,13 +99,13 @@ RAM-data {
 
 .left {
     display:block;
-    padding: 50px;
+    padding-top: 50px;
     position: relative;
     float: left;
 }
 
 .right {
-    padding: 50px;
+    padding-top: 0px;
     position: relative;
     float: right;
 }
@@ -160,13 +160,11 @@ button:disabled {
 }
 
 .input_instruction {
-    height: 292px;
+    height: 330px;
     width: 352px;
-    position: relative;
     float: right;
-    font-size:18px;
-    line-height: 1.4em;
     background-color: #f5f5f5;
+    border: 1px solid;
 }
 
 .line {
@@ -189,7 +187,6 @@ button:disabled {
 }
    
 .textAreaWithLines textarea,.textAreaWithLines div{
-    border:0px;
     line-height:120%;
     font-size:15px;
     font-weight: normal;

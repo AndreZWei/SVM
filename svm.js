@@ -7668,12 +7668,6 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$calculateScrollTop = F2(
-	function (model, scrollTop) {
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{scrollTop: scrollTop});
-	});
 var _user$project$Main$styleTa = _elm_lang$html$Html_Attributes$style(
 	_elm_lang$core$Native_List.fromArray(
 		[
@@ -7720,7 +7714,7 @@ var _user$project$Main$styleEl = _elm_lang$html$Html_Attributes$style(
 	_elm_lang$core$Native_List.fromArray(
 		[
 			{ctor: '_Tuple2', _0: 'width', _1: '352px'},
-			{ctor: '_Tuple2', _0: 'height', _1: '290px'},
+			{ctor: '_Tuple2', _0: 'height', _1: '330px'},
 			{ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
 			{ctor: '_Tuple2', _0: 'position', _1: 'relative'}
 		]));
@@ -8785,16 +8779,13 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			default:
-				return A2(
-					_elm_lang$core$Debug$log,
-					'HELLO',
-					{
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{scrollTop: _p33._0}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{scrollTop: _p33._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$Position = function (a) {

@@ -427,7 +427,7 @@ update msg model =
 
         Stop -> { model| running = False, errorMsg = "SVM Halt"} ! []
 
-        Position scrollTop -> Debug.log "HELLO" ( { model | scrollTop = scrollTop }, Cmd.none)
+        Position scrollTop -> ( { model | scrollTop = scrollTop }, Cmd.none)
 
 
 --View
@@ -535,7 +535,7 @@ styleEl: Attribute msg
 styleEl = 
     style 
         [ ("width", "352px")
-        , ("height", "290px")
+        , ("height", "330px")
         , ("overflow", "hidden")
         , ("position", "relative")
         ]
@@ -550,8 +550,6 @@ styleLo model =
         , ("top", toString (scrollTop)++"px")
         ]
 
---Why don't I give it a try?
-
 scrollTop: Json.Decoder Int
 scrollTop = 
     Json.at ["target", "scrollTop"] Json.int
@@ -564,9 +562,6 @@ styleTa =
         , ("left", "30px")
         ]
 
-calculateScrollTop: Model -> Int -> Model
-calculateScrollTop model scrollTop =
-    { model | scrollTop = scrollTop}
 
 onScroll : (Int -> msg) -> Attribute msg
 onScroll tagger =
