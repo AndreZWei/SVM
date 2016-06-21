@@ -1,8 +1,6 @@
 # SVM
 
-You can try it <a href="https://cdn.rawgit.com/AndreZWei/SVM/master/demo.html">here</a>.
-
-This is a simple virtual machine implemented by Elm.
+This is a simple virtual machine implemented by Elm. You can try it <a href="https://cdn.rawgit.com/AndreZWei/SVM/master/demo.html">here</a>.
 
 The Virtual Machine has 8 registers:
 <ul>
@@ -15,9 +13,9 @@ The Virtual Machine has 8 registers:
 
 It takes in 17 types of instructions:
 <ul>
-<li> LOD Rd, offset, Rs: let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
+<li> LOD Rd, offset(Rs): let base be the contents of register Rs. Then this loads RAM[base + offset] into register Rd.
 <li>Li Rd, number: loads number into register Rd.
-<li>STO Rs, offset, Rd: let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
+<li>STO Rs, offset(Rd): let base be the contents of register Rd, stores the contents of register Rs into location base + offset in the memory.
 <li>MOV Rd, Rs: copies the contents of register Rs into register Rd.
 <li>ADD Rd, Rs, Rt: adds the contents of registers Rs and Rt and stores the sum in register Rd.
 <li>SUB Rd, Rs, Rt: subtracts the contents of register Rt from Rs and stores the difference in register Rd.
