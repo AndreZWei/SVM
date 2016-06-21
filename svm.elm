@@ -368,58 +368,39 @@ cycle model =
                     { model | pc = newpc, errorMsg = "SVM Halt", finished = True, running = False}
         _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "There is something wrong with your instruction in line " ++ (toString newpc) }
 
-svm: Model -> Model
-svm model = 
-    let 
-        instruction = getInstruction model.pc model.image.text
-    in 
-    case instruction of 
-        Just Hlt -> cycle model
-        _   ->  case model.error of 
-            False ->  let 
-                        newModel = cycle model
-                      in 
-                        svm newModel
-            True -> model 
 
 -- A helper function to facilitate the processing of codes
+
+replace: String -> String
+replace s = String.map (\c -> if (c == ',') || (c == '(') || (c == ')') then ' ' else c ) s
+
 separate: String -> List String
-separate s = List.concat (List.map String.words (String.split "," s))
+separate s = String.words (replace s)
 
 
 update: Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
     case msg of 
-        Step -> (cycle model, Cmd.none)
+        Step -> (cycle model) ! []
 
         Instructions code ->
             let 
                 text = List.map processCode (List.map separate (String.lines (String.toUpper code)))
                 () = Debug.log (toString text) ()
                 newImage = {text = text, data = model.image.data}
-                newModel = {model | image = newImage, field = code}
             in 
-                (newModel, Cmd.none)
+                {model | image = newImage, field = code} ! []
         
         RAM numbers ->
             let 
                 data = List.map (Result.withDefault 0) (List.map String.toInt (separate numbers))
                 newImage = {text = model.image.text, data = data} 
-                newModel = {model | image = newImage}
             in 
-                (newModel, Cmd.none)
+                {model | image = newImage} ! []
         
-        Run ->  
-            let 
-                newModel = { model | running = True}
-            in 
-                (newModel, Cmd.none)
+        Run ->  { model | running = True} ! []
 
-        Reset -> 
-            let 
-                newModel = {initmodel | field = model.field, image = model.image, speed = model.speed}
-            in 
-                (newModel, Cmd.none)
+        Reset -> {initmodel | field = model.field, image = model.image, speed = model.speed} ! []
 
         UpdateTime time -> if (model.running == True) then (cycle model, Cmd.none) else (model, Cmd.none)
 
@@ -427,7 +408,7 @@ update msg model =
 
         Stop -> { model| running = False, errorMsg = "SVM Halt"} ! []
 
-        Position scrollTop -> ( { model | scrollTop = scrollTop }, Cmd.none)
+        Position scrollTop -> { model | scrollTop = scrollTop } ! []
 
 
 --View
@@ -442,12 +423,6 @@ view model =
         , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
         , br [] []
         , p [] [Html.text "Instructions"]
-        {-, div [class "instruction"] 
-            [ let int = List.length (String.lines model.field) in div [class "line_number"] (draw int int)
-            , textarea [onInput Instructions, class "input_instruction"] []
-            , p [] [Html.text ("Number of lines = " ++ (toString (List.length model.image.text)))]
-            ]
-        -}
         , createTextAreaWithLines model "input_instruction"
         , br [] []   
         , div [ class "button_list"]
@@ -486,21 +461,6 @@ subs model =
     Time.every (model.speed * second) UpdateTime
 
 
-{--draw: Int -> Int ->List (Html Msg)
-draw int total = 
-    case (total < 12) of 
-        True -> let drawless int total = 
-                    case (int == 1) of 
-                        True -> [div [class "line"] [Html.text (toString (1+total-int))]]
-                        False -> ((div [class "line"] [Html.text ((toString (1 + total - int))++ "\n")])  :: (drawless (int-1) total))
-                in 
-                    drawless int total
-        False -> let drawmore int total =
-                    case (int == total - 11) of 
-                        True -> [div [class "line"] [Html.text ((toString (total)))]]
-                        False -> ((div [class "line"] [Html.text ((toString (2 * total - int - 11))++ "\n")])  :: (draw (int-1) total))
-                in 
-                    drawmore int total--}
 
 -- Create a string of line numbers
 string: Int -> Int -> String
@@ -510,6 +470,8 @@ string n total =
         False -> (toString (total + 1 - n)) ++ "\n" ++ (string (n-1) total) 
 
 
+
+-- The main function that creates a div containing a textarea with lines
 createTextAreaWithLines: Model -> String -> Html Msg
 createTextAreaWithLines model id =
     div [ class "textAreaWithLines"
@@ -531,6 +493,7 @@ createTextAreaWithLines model id =
                    ] [ ]
         ]
 
+-- The style of the elements
 styleEl: Attribute msg
 styleEl = 
     style 

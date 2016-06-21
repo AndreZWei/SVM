@@ -7733,12 +7733,23 @@ var _user$project$Main$string = F2(
 					A2(_user$project$Main$string, n - 1, total)));
 		}
 	});
+var _user$project$Main$replace = function (s) {
+	return A2(
+		_elm_lang$core$String$map,
+		function (c) {
+			return (_elm_lang$core$Native_Utils.eq(
+				c,
+				_elm_lang$core$Native_Utils.chr(',')) || (_elm_lang$core$Native_Utils.eq(
+				c,
+				_elm_lang$core$Native_Utils.chr('(')) || _elm_lang$core$Native_Utils.eq(
+				c,
+				_elm_lang$core$Native_Utils.chr(')')))) ? _elm_lang$core$Native_Utils.chr(' ') : c;
+		},
+		s);
+};
 var _user$project$Main$separate = function (s) {
-	return _elm_lang$core$List$concat(
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$core$String$words,
-			A2(_elm_lang$core$String$split, ',', s)));
+	return _elm_lang$core$String$words(
+		_user$project$Main$replace(s));
 };
 var _user$project$Main$model = {
 	registers: {r0: 0, r1: 0, r2: 0, r3: 0},
@@ -8431,26 +8442,6 @@ var _user$project$Main$cycle = function (model) {
 				}));
 	}
 };
-var _user$project$Main$svm = function (model) {
-	svm:
-	while (true) {
-		var instruction = A2(_user$project$Main$getInstruction, model.pc, model.image.text);
-		var _p29 = instruction;
-		if ((_p29.ctor === 'Just') && (_p29._0.ctor === 'Hlt')) {
-			return _user$project$Main$cycle(model);
-		} else {
-			var _p30 = model.error;
-			if (_p30 === false) {
-				var newModel = _user$project$Main$cycle(model);
-				var _v29 = newModel;
-				model = _v29;
-				continue svm;
-			} else {
-				return model;
-			}
-		}
-	}
-};
 var _user$project$Main$Registers = F4(
 	function (a, b, c, d) {
 		return {r0: a, r1: b, r2: c, r3: d};
@@ -8492,8 +8483,8 @@ var _user$project$Main$R2 = {ctor: 'R2'};
 var _user$project$Main$R1 = {ctor: 'R1'};
 var _user$project$Main$R0 = {ctor: 'R0'};
 var _user$project$Main$reg_of_string = function (s) {
-	var _p31 = s;
-	switch (_p31) {
+	var _p29 = s;
+	switch (_p29) {
 		case 'R0':
 			return _elm_lang$core$Maybe$Just(_user$project$Main$R0);
 		case 'R1':
@@ -8553,158 +8544,158 @@ var _user$project$Main$Lod = function (a) {
 	return {ctor: 'Lod', _0: a};
 };
 var _user$project$Main$processCode = function (s) {
-	var _p32 = s;
-	_v31_16:
+	var _p30 = s;
+	_v28_16:
 	do {
-		if (_p32.ctor === '::') {
-			if (_p32._1.ctor === '::') {
-				if (_p32._1._1.ctor === '::') {
-					if (_p32._1._1._1.ctor === '::') {
-						if (_p32._1._1._1._1.ctor === '[]') {
-							switch (_p32._0) {
+		if (_p30.ctor === '::') {
+			if (_p30._1.ctor === '::') {
+				if (_p30._1._1.ctor === '::') {
+					if (_p30._1._1._1.ctor === '::') {
+						if (_p30._1._1._1._1.ctor === '[]') {
+							switch (_p30._0) {
 								case 'LOD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Lod(
 											{
-												rd: _user$project$Main$reg_of_string(_p32._1._0),
+												rd: _user$project$Main$reg_of_string(_p30._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p32._1._1._0)),
-												rs: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+													_elm_lang$core$String$toInt(_p30._1._1._0)),
+												rs: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								case 'STO':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sto(
 											{
-												rs: _user$project$Main$reg_of_string(_p32._1._0),
+												rs: _user$project$Main$reg_of_string(_p30._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p32._1._1._0)),
-												rd: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+													_elm_lang$core$String$toInt(_p30._1._1._0)),
+												rd: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								case 'ADD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Add(
 											{
-												rd: _user$project$Main$reg_of_string(_p32._1._0),
-												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								case 'SUB':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sub(
 											{
-												rd: _user$project$Main$reg_of_string(_p32._1._0),
-												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								case 'MUL':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Mul(
 											{
-												rd: _user$project$Main$reg_of_string(_p32._1._0),
-												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								case 'DIV':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Div(
 											{
-												rd: _user$project$Main$reg_of_string(_p32._1._0),
-												rs: _user$project$Main$reg_of_string(_p32._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p32._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
 											}));
 								default:
-									break _v31_16;
+									break _v28_16;
 							}
 						} else {
-							break _v31_16;
+							break _v28_16;
 						}
 					} else {
-						switch (_p32._0) {
+						switch (_p30._0) {
 							case 'LI':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Li(
 										{
-											rd: _user$project$Main$reg_of_string(_p32._1._0),
+											rd: _user$project$Main$reg_of_string(_p30._1._0),
 											number: _elm_lang$core$Result$toMaybe(
-												_elm_lang$core$String$toInt(_p32._1._1._0))
+												_elm_lang$core$String$toInt(_p30._1._1._0))
 										}));
 							case 'MOV':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Mov(
 										{
-											rd: _user$project$Main$reg_of_string(_p32._1._0),
-											rs: _user$project$Main$reg_of_string(_p32._1._1._0)
+											rd: _user$project$Main$reg_of_string(_p30._1._0),
+											rs: _user$project$Main$reg_of_string(_p30._1._1._0)
 										}));
 							case 'CMP':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Cmp(
 										{
-											rs: _user$project$Main$reg_of_string(_p32._1._0),
-											rt: _user$project$Main$reg_of_string(_p32._1._1._0)
+											rs: _user$project$Main$reg_of_string(_p30._1._0),
+											rt: _user$project$Main$reg_of_string(_p30._1._1._0)
 										}));
 							default:
-								break _v31_16;
+								break _v28_16;
 						}
 					}
 				} else {
-					switch (_p32._0) {
+					switch (_p30._0) {
 						case 'BLT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Blt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p32._1._0))));
+										_elm_lang$core$String$toInt(_p30._1._0))));
 						case 'BEQ':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Beq(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p32._1._0))));
+										_elm_lang$core$String$toInt(_p30._1._0))));
 						case 'BGT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Bgt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p32._1._0))));
+										_elm_lang$core$String$toInt(_p30._1._0))));
 						case 'JMP':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jmp(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p32._1._0))));
+										_elm_lang$core$String$toInt(_p30._1._0))));
 						case 'JSR':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jsr(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p32._1._0))));
+										_elm_lang$core$String$toInt(_p30._1._0))));
 						default:
-							break _v31_16;
+							break _v28_16;
 					}
 				}
 			} else {
-				switch (_p32._0) {
+				switch (_p30._0) {
 					case 'R':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$R);
 					case 'HLT':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$Hlt);
 					default:
-						break _v31_16;
+						break _v28_16;
 				}
 			}
 		} else {
-			break _v31_16;
+			break _v28_16;
 		}
 	} while(false);
 	return _elm_lang$core$Maybe$Nothing;
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p33 = msg;
-		switch (_p33.ctor) {
+		var _p31 = msg;
+		switch (_p31.ctor) {
 			case 'Step':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Main$cycle(model),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_user$project$Main$cycle(model),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'Instructions':
-				var _p35 = _p33._0;
+				var _p33 = _p31._0;
 				var text = A2(
 					_elm_lang$core$List$map,
 					_user$project$Main$processCode,
@@ -8712,16 +8703,19 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$List$map,
 						_user$project$Main$separate,
 						_elm_lang$core$String$lines(
-							_elm_lang$core$String$toUpper(_p35))));
-				var _p34 = A2(
+							_elm_lang$core$String$toUpper(_p33))));
+				var _p32 = A2(
 					_elm_lang$core$Debug$log,
 					_elm_lang$core$Basics$toString(text),
 					{ctor: '_Tuple0'});
 				var newImage = {text: text, data: model.image.data};
-				var newModel = _elm_lang$core$Native_Utils.update(
-					model,
-					{image: newImage, field: _p35});
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{image: newImage, field: _p33}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'RAM':
 				var data = A2(
 					_elm_lang$core$List$map,
@@ -8729,22 +8723,31 @@ var _user$project$Main$update = F2(
 					A2(
 						_elm_lang$core$List$map,
 						_elm_lang$core$String$toInt,
-						_user$project$Main$separate(_p33._0)));
+						_user$project$Main$separate(_p31._0)));
 				var newImage = {text: model.image.text, data: data};
-				var newModel = _elm_lang$core$Native_Utils.update(
-					model,
-					{image: newImage});
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{image: newImage}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'Run':
-				var newModel = _elm_lang$core$Native_Utils.update(
-					model,
-					{running: true});
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{running: true}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'Reset':
-				var newModel = _elm_lang$core$Native_Utils.update(
-					_user$project$Main$initmodel,
-					{field: model.field, image: model.image, speed: model.speed});
-				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_user$project$Main$initmodel,
+						{field: model.field, image: model.image, speed: model.speed}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			case 'UpdateTime':
 				return _elm_lang$core$Native_Utils.eq(model.running, true) ? {
 					ctor: '_Tuple2',
@@ -8766,7 +8769,7 @@ var _user$project$Main$update = F2(
 								speed: A2(
 									_elm_lang$core$Result$withDefault,
 									1,
-									_elm_lang$core$String$toFloat(_p33._0))
+									_elm_lang$core$String$toFloat(_p31._0))
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					});
@@ -8779,13 +8782,13 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
 						model,
-						{scrollTop: _p33._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
+						{scrollTop: _p31._0}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 		}
 	});
 var _user$project$Main$Position = function (a) {
