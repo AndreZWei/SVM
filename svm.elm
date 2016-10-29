@@ -421,10 +421,10 @@ view model =
       [ header [] [h1 [] [Html.text "Simple Virtual Machine"]] 
       , section [ class "body"] 
       [ span [ class "left" ]
-        [ span [ class "text"] [Html.text "Data Segments"]
+        [ span [ class "text"] [Html.text "Data Segment"]
         , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
         , br [] []
-        , p [] [Html.text "Text Segments"]
+        , p [] [Html.text "Text Segment"]
         , createTextAreaWithLines model "input_instruction"
         , br [] []   
         , div [ class "button_list"]

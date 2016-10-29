@@ -9593,7 +9593,7 @@ var _user$project$Main$view = function (model) {
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('Data Segments')
+										_elm_lang$html$Html$text('Data Segment')
 									])),
 								A2(
 								_elm_lang$html$Html$div,
@@ -9626,7 +9626,7 @@ var _user$project$Main$view = function (model) {
 									[]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('Text Segments')
+										_elm_lang$html$Html$text('Text Segment')
 									])),
 								A2(_user$project$Main$createTextAreaWithLines, model, 'input_instruction'),
 								A2(
