@@ -374,9 +374,11 @@ cycle model =
 replace: String -> String
 replace s = String.map (\c -> if (c == ',') || (c == '(') || (c == ')') then ' ' else c ) s
 
-separate: String -> List String
-separate s = String.words (replace s)
+uncomment: String -> String
+uncomment s = Maybe.withDefault "0" (List.head (String.split "#" s))
 
+separate: String -> List String
+separate s = String.words (uncomment (replace s))
 
 update: Msg -> Model -> (Model, Cmd Msg)
 update msg model = 
@@ -419,10 +421,10 @@ view model =
       [ header [] [h1 [] [Html.text "Simple Virtual Machine"]] 
       , section [ class "body"] 
       [ span [ class "left" ]
-        [ span [ class "text"] [Html.text "RAM Data"]
+        [ span [ class "text"] [Html.text "Data Segments"]
         , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
         , br [] []
-        , p [] [Html.text "Instructions"]
+        , p [] [Html.text "Text Segments"]
         , createTextAreaWithLines model "input_instruction"
         , br [] []   
         , div [ class "button_list"]

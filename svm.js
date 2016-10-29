@@ -8411,6 +8411,13 @@ var _user$project$Main$string = F2(
 					A2(_user$project$Main$string, n - 1, total)));
 		}
 	});
+var _user$project$Main$uncomment = function (s) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		'0',
+		_elm_lang$core$List$head(
+			A2(_elm_lang$core$String$split, '#', s)));
+};
 var _user$project$Main$replace = function (s) {
 	return A2(
 		_elm_lang$core$String$map,
@@ -8427,7 +8434,8 @@ var _user$project$Main$replace = function (s) {
 };
 var _user$project$Main$separate = function (s) {
 	return _elm_lang$core$String$words(
-		_user$project$Main$replace(s));
+		_user$project$Main$uncomment(
+			_user$project$Main$replace(s)));
 };
 var _user$project$Main$model = {
 	registers: {r0: 0, r1: 0, r2: 0, r3: 0},
@@ -9585,7 +9593,7 @@ var _user$project$Main$view = function (model) {
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('RAM Data')
+										_elm_lang$html$Html$text('Data Segments')
 									])),
 								A2(
 								_elm_lang$html$Html$div,
@@ -9618,7 +9626,7 @@ var _user$project$Main$view = function (model) {
 									[]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text('Instructions')
+										_elm_lang$html$Html$text('Text Segments')
 									])),
 								A2(_user$project$Main$createTextAreaWithLines, model, 'input_instruction'),
 								A2(

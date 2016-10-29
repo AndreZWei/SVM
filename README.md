@@ -31,4 +31,6 @@ It takes in 17 types of instructions:
 <li>HLT: causes the svm machine to print the contents of registers PC, PSW, RA, R0, R1, R2 and R3. It then stops, returning ().
 </ul>
 
+You can add comments, starting with "#", after each line of instructions.
+
 The SVM is currently in its demo version.
