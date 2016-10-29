@@ -1,6 +1,6 @@
 # SVM
 
-This is a simple virtual machine implemented by Elm. You can try it <a href="https://rawgit.com/AndreZWei/SVM/master/index.html">here</a>.
+This is a simple virtual machine implemented by Elm. You can try it <a href="https://rawgit.com/AndreZWei/SVM/master/demo.html">here</a>.
 
 The Virtual Machine has 8 registers:
 <ul>
