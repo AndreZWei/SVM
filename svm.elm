@@ -366,7 +366,7 @@ cycle model =
                     () = (Debug.log "\nSVM Halt" (), printState pc psw ra registers)
                 in 
                     { model | pc = newpc, errorMsg = "SVM Halt", finished = True, running = False}
-        _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "There is something wrong with your instruction in line " ++ (toString newpc) }
+        _ -> Debug.log "Invalid instructions" { model | error = True, errorMsg = "Invalid instruction in line " ++ (toString pc) }
 
 
 -- A helper function to facilitate the processing of codes
@@ -444,7 +444,7 @@ view model =
                     , li [] [Html.text "R1 = ", Html.text (toString model.registers.r1)]
                     , li [] [Html.text "R2 = ", Html.text (toString model.registers.r2)]
                     , li [] [Html.text "R3 = ", Html.text (toString model.registers.r3)]
-                    , li [] [Html.text "PC = ", Html.text (toString model.pc)]
+                    , li [] [Html.text "PC = ", Html.text (toString (model.pc))]
                     , li [] [Html.text "RA = ", Html.text (toString model.ra)]
                     , li [] [Html.text "PSW = ", Html.text (toString model.psw)]
                     ]
@@ -466,8 +466,8 @@ subs model =
 string: Int -> Int -> String
 string n total = 
     case (n == 1) of 
-        True -> (toString (total + 1 - n))
-        False -> (toString (total + 1 - n)) ++ "\n" ++ (string (n-1) total) 
+        True -> (toString (total - n))
+        False -> (toString (total - n)) ++ "\n" ++ (string (n-1) total) 
 
 
 
