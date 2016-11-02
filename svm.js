@@ -8871,7 +8871,7 @@ var _user$project$Main$cycle = function (model) {
 					var value = A2(_user$project$Main$registerGet, _p13._0._0, registers);
 					var _p14 = _elm_lang$core$Debug$log(
 						_elm_lang$core$Basics$toString(value));
-					var addr = _p13._1._0 + A2(_user$project$Main$registerGet, _p13._2._0, registers);
+					var addr = (_p13._1._0 + A2(_user$project$Main$registerGet, _p13._2._0, registers)) + 1;
 					var newData = A3(_user$project$Main$ramPut, value, addr, img.data);
 					var newImage = {text: img.text, data: newData};
 					return _elm_lang$core$Native_Utils.update(

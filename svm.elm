@@ -253,7 +253,7 @@ cycle model =
             case (rs, offset, rd) of 
                 (Just rs, Just offset, Just rd) ->
                     let 
-                        addr = offset + (registerGet rd registers)
+                        addr = offset + (registerGet rd registers) + 1
                         value = registerGet rs registers
                         newData = ramPut value addr img.data
                         newImage = {text = img.text, data = newData}
