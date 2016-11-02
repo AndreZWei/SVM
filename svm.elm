@@ -346,7 +346,7 @@ cycle model =
         Just (Bgt disp) ->
             case disp of 
                 Just disp ->
-                    case psw < 0 of 
+                    case psw > 0 of 
                         True -> { model | pc = newpc + disp}
                         False -> { model | pc = newpc}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Bgt command in line " ++ (toString pc)}

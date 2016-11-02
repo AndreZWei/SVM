@@ -9058,7 +9058,7 @@ var _user$project$Main$cycle = function (model) {
 			case 'Bgt':
 				var _p25 = _p10._0._0;
 				if (_p25.ctor === 'Just') {
-					var _p26 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
+					var _p26 = _elm_lang$core$Native_Utils.cmp(psw, 0) > 0;
 					if (_p26 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
