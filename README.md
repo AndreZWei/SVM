@@ -33,4 +33,7 @@ It takes in 17 types of instructions:
 
 You can add comments, starting with "#", after each line of instructions.
 
+Important Note: Please click on "save" every time you have finished inputting the Data; otherwise, the data will vanish when you reset the program!
+
 The SVM is currently in its demo version.
+

@@ -8411,6 +8411,20 @@ var _user$project$Main$string = F2(
 					A2(_user$project$Main$string, n - 1, total)));
 		}
 	});
+var _user$project$Main$showdata = function (data) {
+	var _p1 = data;
+	if (_p1.ctor === '[]') {
+		return '\n';
+	} else {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			_elm_lang$core$Basics$toString(_p1._0),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				' ',
+				_user$project$Main$showdata(_p1._1)));
+	}
+};
 var _user$project$Main$uncomment = function (s) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
@@ -8455,14 +8469,16 @@ var _user$project$Main$model = {
 	running: false,
 	time: 0,
 	speed: 1,
-	scrollTop: 0
+	scrollTop: 0,
+	originalData: _elm_lang$core$Native_List.fromArray(
+		[])
 };
 var _user$project$Main$initmodel = _user$project$Main$model;
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$ramPut = F3(
 	function (v, n, segment) {
-		var _p1 = n;
-		if (_p1 === 0) {
+		var _p2 = n;
+		if (_p2 === 0) {
 			return A2(_elm_lang$core$List_ops['::'], v, segment);
 		} else {
 			return A2(
@@ -8471,13 +8487,13 @@ var _user$project$Main$ramPut = F3(
 				A2(
 					_elm_lang$core$List_ops['::'],
 					v,
-					A2(_elm_lang$core$List$drop, n - 1, segment)));
+					A2(_elm_lang$core$List$drop, n, segment)));
 		}
 	});
 var _user$project$Main$ramGet = F2(
 	function (n, segment) {
-		var _p2 = n;
-		if (_p2 === 0) {
+		var _p3 = n;
+		if (_p3 === 0) {
 			return _elm_lang$core$List$head(segment);
 		} else {
 			return _elm_lang$core$List$head(
@@ -8487,16 +8503,16 @@ var _user$project$Main$ramGet = F2(
 var _user$project$Main$getInstruction = F2(
 	function (a, text) {
 		var instruction = A2(_user$project$Main$ramGet, a, text);
-		var _p3 = instruction;
-		if ((_p3.ctor === 'Just') && (_p3._0.ctor === 'Just')) {
-			return _elm_lang$core$Maybe$Just(_p3._0._0);
+		var _p4 = instruction;
+		if ((_p4.ctor === 'Just') && (_p4._0.ctor === 'Just')) {
+			return _elm_lang$core$Maybe$Just(_p4._0._0);
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	});
 var _user$project$Main$string_of_int = function (n) {
-	var _p4 = n;
-	if (_p4.ctor === 'Just') {
+	var _p5 = n;
+	if (_p5.ctor === 'Just') {
 		return 'n';
 	} else {
 		return 'Not a number';
@@ -8504,8 +8520,8 @@ var _user$project$Main$string_of_int = function (n) {
 };
 var _user$project$Main$registerPut = F3(
 	function (value, dest, r) {
-		var _p5 = dest;
-		switch (_p5.ctor) {
+		var _p6 = dest;
+		switch (_p6.ctor) {
 			case 'R0':
 				return _elm_lang$core$Native_Utils.update(
 					r,
@@ -8528,8 +8544,8 @@ var _user$project$Main$registerPut = F3(
 	});
 var _user$project$Main$registerGet = F2(
 	function (register, r) {
-		var _p6 = register;
-		switch (_p6.ctor) {
+		var _p7 = register;
+		switch (_p7.ctor) {
 			case 'R0':
 				return r.r0;
 			case 'R1':
@@ -8543,9 +8559,9 @@ var _user$project$Main$registerGet = F2(
 		}
 	});
 var _user$project$Main$string_of_reg = function (r) {
-	var _p7 = r;
-	if (_p7.ctor === 'Just') {
-		switch (_p7._0.ctor) {
+	var _p8 = r;
+	if (_p8.ctor === 'Just') {
+		switch (_p8._0.ctor) {
 			case 'R0':
 				return 'R0';
 			case 'R1':
@@ -8564,27 +8580,27 @@ var _user$project$Main$string_of_reg = function (r) {
 var _user$project$Main$string_of_instruction = function (i) {
 	var si = _user$project$Main$string_of_int;
 	var sr = _user$project$Main$string_of_reg;
-	var _p8 = i;
-	switch (_p8.ctor) {
+	var _p9 = i;
+	switch (_p9.ctor) {
 		case 'Lod':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Lod\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							si(_p8._0.offset),
+							si(_p9._0.offset),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'(',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									sr(_p8._0.rs),
+									sr(_p9._0.rs),
 									')'))))));
 		case 'Li':
 			return A2(
@@ -8592,30 +8608,30 @@ var _user$project$Main$string_of_instruction = function (i) {
 				'Li\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						si(_p8._0.number))));
+						si(_p9._0.number))));
 		case 'Sto':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Sto\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rs),
+					sr(_p9._0.rs),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							si(_p8._0.offset),
+							si(_p9._0.offset),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								'(',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									sr(_p8._0.rd),
+									sr(_p9._0.rd),
 									')'))))));
 		case 'Mov':
 			return A2(
@@ -8623,115 +8639,115 @@ var _user$project$Main$string_of_instruction = function (i) {
 				'Mov\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						sr(_p8._0.rs))));
+						sr(_p9._0.rs))));
 		case 'Add':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Add\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p8._0.rs),
+							sr(_p9._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p8._0.rt))))));
+								sr(_p9._0.rt))))));
 		case 'Sub':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Sub\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p8._0.rs),
+							sr(_p9._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p8._0.rt))))));
+								sr(_p9._0.rt))))));
 		case 'Mul':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Mul\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p8._0.rs),
+							sr(_p9._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p8._0.rt))))));
+								sr(_p9._0.rt))))));
 		case 'Div':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Div\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rd),
+					sr(_p9._0.rd),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							sr(_p8._0.rs),
+							sr(_p9._0.rs),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								', ',
-								sr(_p8._0.rt))))));
+								sr(_p9._0.rt))))));
 		case 'Cmp':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Cmp\t',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					sr(_p8._0.rs),
+					sr(_p9._0.rs),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						', ',
-						sr(_p8._0.rt))));
+						sr(_p9._0.rt))));
 		case 'Blt':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Blt\t',
-				si(_p8._0));
+				si(_p9._0));
 		case 'Beq':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Beq\t',
-				si(_p8._0));
+				si(_p9._0));
 		case 'Bgt':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Bgt\t',
-				si(_p8._0));
+				si(_p9._0));
 		case 'Jmp':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Jmp\t',
-				si(_p8._0));
+				si(_p9._0));
 		case 'Jsr':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
 				'Jsr\t',
-				si(_p8._0));
+				si(_p9._0));
 		case 'R':
 			return 'R';
 		default:
@@ -8805,18 +8821,18 @@ var _user$project$Main$cycle = function (model) {
 	var newpc = pc + 1;
 	var registers = model.registers;
 	var instruction = A2(_user$project$Main$getInstruction, model.pc, model.image.text);
-	var _p9 = instruction;
-	if (_p9.ctor === 'Just') {
-		switch (_p9._0.ctor) {
+	var _p10 = instruction;
+	if (_p10.ctor === 'Just') {
+		switch (_p10._0.ctor) {
 			case 'Lod':
-				var _p10 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.offset, _2: _p9._0._0.rs};
-				if ((((_p10.ctor === '_Tuple3') && (_p10._0.ctor === 'Just')) && (_p10._1.ctor === 'Just')) && (_p10._2.ctor === 'Just')) {
-					var addr = _p10._1._0 + A2(_user$project$Main$registerGet, _p10._2._0, registers);
+				var _p11 = {ctor: '_Tuple3', _0: _p10._0._0.rd, _1: _p10._0._0.offset, _2: _p10._0._0.rs};
+				if ((((_p11.ctor === '_Tuple3') && (_p11._0.ctor === 'Just')) && (_p11._1.ctor === 'Just')) && (_p11._2.ctor === 'Just')) {
+					var addr = _p11._1._0 + A2(_user$project$Main$registerGet, _p11._2._0, registers);
 					var value = A2(
 						_elm_lang$core$Maybe$withDefault,
 						0,
 						A2(_user$project$Main$ramGet, addr, img.data));
-					var newRegisters = A3(_user$project$Main$registerPut, value, _p10._0._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, value, _p11._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8832,9 +8848,9 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Li':
-				var _p11 = {ctor: '_Tuple2', _0: _p9._0._0.rd, _1: _p9._0._0.number};
-				if (((_p11.ctor === '_Tuple2') && (_p11._0.ctor === 'Just')) && (_p11._1.ctor === 'Just')) {
-					var newRegisters = A3(_user$project$Main$registerPut, _p11._1._0, _p11._0._0, registers);
+				var _p12 = {ctor: '_Tuple2', _0: _p10._0._0.rd, _1: _p10._0._0.number};
+				if (((_p12.ctor === '_Tuple2') && (_p12._0.ctor === 'Just')) && (_p12._1.ctor === 'Just')) {
+					var newRegisters = A3(_user$project$Main$registerPut, _p12._1._0, _p12._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8850,11 +8866,12 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Sto':
-				var _p12 = {ctor: '_Tuple3', _0: _p9._0._0.rs, _1: _p9._0._0.offset, _2: _p9._0._0.rd};
-				if ((((_p12.ctor === '_Tuple3') && (_p12._0.ctor === 'Just')) && (_p12._1.ctor === 'Just')) && (_p12._2.ctor === 'Just')) {
-					var _p13 = _p12._0._0;
-					var value = A2(_user$project$Main$registerGet, _p13, registers);
-					var addr = _p12._1._0 + A2(_user$project$Main$registerGet, _p13, registers);
+				var _p13 = {ctor: '_Tuple3', _0: _p10._0._0.rs, _1: _p10._0._0.offset, _2: _p10._0._0.rd};
+				if ((((_p13.ctor === '_Tuple3') && (_p13._0.ctor === 'Just')) && (_p13._1.ctor === 'Just')) && (_p13._2.ctor === 'Just')) {
+					var value = A2(_user$project$Main$registerGet, _p13._0._0, registers);
+					var _p14 = _elm_lang$core$Debug$log(
+						_elm_lang$core$Basics$toString(value));
+					var addr = _p13._1._0 + A2(_user$project$Main$registerGet, _p13._2._0, registers);
 					var newData = A3(_user$project$Main$ramPut, value, addr, img.data);
 					var newImage = {text: img.text, data: newData};
 					return _elm_lang$core$Native_Utils.update(
@@ -8872,10 +8889,10 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Mov':
-				var _p14 = {ctor: '_Tuple2', _0: _p9._0._0.rd, _1: _p9._0._0.rs};
-				if (((_p14.ctor === '_Tuple2') && (_p14._0.ctor === 'Just')) && (_p14._1.ctor === 'Just')) {
-					var v = A2(_user$project$Main$registerGet, _p14._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v, _p14._0._0, registers);
+				var _p15 = {ctor: '_Tuple2', _0: _p10._0._0.rd, _1: _p10._0._0.rs};
+				if (((_p15.ctor === '_Tuple2') && (_p15._0.ctor === 'Just')) && (_p15._1.ctor === 'Just')) {
+					var v = A2(_user$project$Main$registerGet, _p15._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v, _p15._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8891,11 +8908,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Add':
-				var _p15 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
-				if ((((_p15.ctor === '_Tuple3') && (_p15._0.ctor === 'Just')) && (_p15._1.ctor === 'Just')) && (_p15._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p15._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p15._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 + v2, _p15._0._0, registers);
+				var _p16 = {ctor: '_Tuple3', _0: _p10._0._0.rd, _1: _p10._0._0.rs, _2: _p10._0._0.rt};
+				if ((((_p16.ctor === '_Tuple3') && (_p16._0.ctor === 'Just')) && (_p16._1.ctor === 'Just')) && (_p16._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p16._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p16._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 + v2, _p16._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8911,11 +8928,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Sub':
-				var _p16 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
-				if ((((_p16.ctor === '_Tuple3') && (_p16._0.ctor === 'Just')) && (_p16._1.ctor === 'Just')) && (_p16._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p16._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p16._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 - v2, _p16._0._0, registers);
+				var _p17 = {ctor: '_Tuple3', _0: _p10._0._0.rd, _1: _p10._0._0.rs, _2: _p10._0._0.rt};
+				if ((((_p17.ctor === '_Tuple3') && (_p17._0.ctor === 'Just')) && (_p17._1.ctor === 'Just')) && (_p17._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p17._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p17._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 - v2, _p17._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8931,11 +8948,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Mul':
-				var _p17 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
-				if ((((_p17.ctor === '_Tuple3') && (_p17._0.ctor === 'Just')) && (_p17._1.ctor === 'Just')) && (_p17._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p17._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p17._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, v1 * v2, _p17._0._0, registers);
+				var _p18 = {ctor: '_Tuple3', _0: _p10._0._0.rd, _1: _p10._0._0.rs, _2: _p10._0._0.rt};
+				if ((((_p18.ctor === '_Tuple3') && (_p18._0.ctor === 'Just')) && (_p18._1.ctor === 'Just')) && (_p18._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p18._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p18._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, v1 * v2, _p18._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8951,11 +8968,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Div':
-				var _p18 = {ctor: '_Tuple3', _0: _p9._0._0.rd, _1: _p9._0._0.rs, _2: _p9._0._0.rt};
-				if ((((_p18.ctor === '_Tuple3') && (_p18._0.ctor === 'Just')) && (_p18._1.ctor === 'Just')) && (_p18._2.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p18._2._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p18._1._0, registers);
-					var newRegisters = A3(_user$project$Main$registerPut, (v1 / v2) | 0, _p18._0._0, registers);
+				var _p19 = {ctor: '_Tuple3', _0: _p10._0._0.rd, _1: _p10._0._0.rs, _2: _p10._0._0.rt};
+				if ((((_p19.ctor === '_Tuple3') && (_p19._0.ctor === 'Just')) && (_p19._1.ctor === 'Just')) && (_p19._2.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p19._2._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p19._1._0, registers);
+					var newRegisters = A3(_user$project$Main$registerPut, (v1 / v2) | 0, _p19._0._0, registers);
 					return _elm_lang$core$Native_Utils.update(
 						model,
 						{registers: newRegisters, pc: newpc});
@@ -8971,10 +8988,10 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Cmp':
-				var _p19 = {ctor: '_Tuple2', _0: _p9._0._0.rs, _1: _p9._0._0.rt};
-				if (((_p19.ctor === '_Tuple2') && (_p19._0.ctor === 'Just')) && (_p19._1.ctor === 'Just')) {
-					var v2 = A2(_user$project$Main$registerGet, _p19._1._0, registers);
-					var v1 = A2(_user$project$Main$registerGet, _p19._0._0, registers);
+				var _p20 = {ctor: '_Tuple2', _0: _p10._0._0.rs, _1: _p10._0._0.rt};
+				if (((_p20.ctor === '_Tuple2') && (_p20._0.ctor === 'Just')) && (_p20._1.ctor === 'Just')) {
+					var v2 = A2(_user$project$Main$registerGet, _p20._1._0, registers);
+					var v1 = A2(_user$project$Main$registerGet, _p20._0._0, registers);
 					var value = v1 - v2;
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -8991,13 +9008,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Blt':
-				var _p20 = _p9._0._0;
-				if (_p20.ctor === 'Just') {
-					var _p21 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
-					if (_p21 === true) {
+				var _p21 = _p10._0._0;
+				if (_p21.ctor === 'Just') {
+					var _p22 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
+					if (_p22 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p20._0});
+							{pc: newpc + _p21._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -9015,13 +9032,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Beq':
-				var _p22 = _p9._0._0;
-				if (_p22.ctor === 'Just') {
-					var _p23 = _elm_lang$core$Native_Utils.eq(psw, 0);
-					if (_p23 === true) {
+				var _p23 = _p10._0._0;
+				if (_p23.ctor === 'Just') {
+					var _p24 = _elm_lang$core$Native_Utils.eq(psw, 0);
+					if (_p24 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p22._0});
+							{pc: newpc + _p23._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -9039,13 +9056,13 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Bgt':
-				var _p24 = _p9._0._0;
-				if (_p24.ctor === 'Just') {
-					var _p25 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
-					if (_p25 === true) {
+				var _p25 = _p10._0._0;
+				if (_p25.ctor === 'Just') {
+					var _p26 = _elm_lang$core$Native_Utils.cmp(psw, 0) < 0;
+					if (_p26 === true) {
 						return _elm_lang$core$Native_Utils.update(
 							model,
-							{pc: newpc + _p24._0});
+							{pc: newpc + _p25._0});
 					} else {
 						return _elm_lang$core$Native_Utils.update(
 							model,
@@ -9063,11 +9080,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Jmp':
-				var _p26 = _p9._0._0;
-				if (_p26.ctor === 'Just') {
+				var _p27 = _p10._0._0;
+				if (_p27.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: newpc + _p26._0});
+						{pc: newpc + _p27._0});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -9080,11 +9097,11 @@ var _user$project$Main$cycle = function (model) {
 						});
 				}
 			case 'Jsr':
-				var _p27 = _p9._0._0;
-				if (_p27.ctor === 'Just') {
+				var _p28 = _p10._0._0;
+				if (_p28.ctor === 'Just') {
 					return _elm_lang$core$Native_Utils.update(
 						model,
-						{pc: newpc + _p27._0, ra: newpc});
+						{pc: newpc + _p28._0, ra: newpc});
 				} else {
 					return _elm_lang$core$Native_Utils.update(
 						model,
@@ -9101,7 +9118,7 @@ var _user$project$Main$cycle = function (model) {
 					model,
 					{pc: ra});
 			default:
-				var _p28 = {
+				var _p29 = {
 					ctor: '_Tuple2',
 					_0: A2(
 						_elm_lang$core$Debug$log,
@@ -9149,7 +9166,9 @@ var _user$project$Main$Model = function (a) {
 										return function (k) {
 											return function (l) {
 												return function (m) {
-													return {registers: a, pc: b, ra: c, psw: d, image: e, field: f, error: g, errorMsg: h, finished: i, running: j, time: k, speed: l, scrollTop: m};
+													return function (n) {
+														return {registers: a, pc: b, ra: c, psw: d, image: e, field: f, error: g, errorMsg: h, finished: i, running: j, time: k, speed: l, scrollTop: m, originalData: n};
+													};
 												};
 											};
 										};
@@ -9169,8 +9188,8 @@ var _user$project$Main$R2 = {ctor: 'R2'};
 var _user$project$Main$R1 = {ctor: 'R1'};
 var _user$project$Main$R0 = {ctor: 'R0'};
 var _user$project$Main$reg_of_string = function (s) {
-	var _p29 = s;
-	switch (_p29) {
+	var _p30 = s;
+	switch (_p30) {
 		case 'R0':
 			return _elm_lang$core$Maybe$Just(_user$project$Main$R0);
 		case 'R1':
@@ -9230,150 +9249,150 @@ var _user$project$Main$Lod = function (a) {
 	return {ctor: 'Lod', _0: a};
 };
 var _user$project$Main$processCode = function (s) {
-	var _p30 = s;
-	_v28_16:
+	var _p31 = s;
+	_v29_16:
 	do {
-		if (_p30.ctor === '::') {
-			if (_p30._1.ctor === '::') {
-				if (_p30._1._1.ctor === '::') {
-					if (_p30._1._1._1.ctor === '::') {
-						if (_p30._1._1._1._1.ctor === '[]') {
-							switch (_p30._0) {
+		if (_p31.ctor === '::') {
+			if (_p31._1.ctor === '::') {
+				if (_p31._1._1.ctor === '::') {
+					if (_p31._1._1._1.ctor === '::') {
+						if (_p31._1._1._1._1.ctor === '[]') {
+							switch (_p31._0) {
 								case 'LOD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Lod(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p30._1._1._0)),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+													_elm_lang$core$String$toInt(_p31._1._1._0)),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'STO':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sto(
 											{
-												rs: _user$project$Main$reg_of_string(_p30._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._0),
 												offset: _elm_lang$core$Result$toMaybe(
-													_elm_lang$core$String$toInt(_p30._1._1._0)),
-												rd: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+													_elm_lang$core$String$toInt(_p31._1._1._0)),
+												rd: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'ADD':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Add(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'SUB':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Sub(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'MUL':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Mul(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								case 'DIV':
 									return _elm_lang$core$Maybe$Just(
 										_user$project$Main$Div(
 											{
-												rd: _user$project$Main$reg_of_string(_p30._1._0),
-												rs: _user$project$Main$reg_of_string(_p30._1._1._0),
-												rt: _user$project$Main$reg_of_string(_p30._1._1._1._0)
+												rd: _user$project$Main$reg_of_string(_p31._1._0),
+												rs: _user$project$Main$reg_of_string(_p31._1._1._0),
+												rt: _user$project$Main$reg_of_string(_p31._1._1._1._0)
 											}));
 								default:
-									break _v28_16;
+									break _v29_16;
 							}
 						} else {
-							break _v28_16;
+							break _v29_16;
 						}
 					} else {
-						switch (_p30._0) {
+						switch (_p31._0) {
 							case 'LI':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Li(
 										{
-											rd: _user$project$Main$reg_of_string(_p30._1._0),
+											rd: _user$project$Main$reg_of_string(_p31._1._0),
 											number: _elm_lang$core$Result$toMaybe(
-												_elm_lang$core$String$toInt(_p30._1._1._0))
+												_elm_lang$core$String$toInt(_p31._1._1._0))
 										}));
 							case 'MOV':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Mov(
 										{
-											rd: _user$project$Main$reg_of_string(_p30._1._0),
-											rs: _user$project$Main$reg_of_string(_p30._1._1._0)
+											rd: _user$project$Main$reg_of_string(_p31._1._0),
+											rs: _user$project$Main$reg_of_string(_p31._1._1._0)
 										}));
 							case 'CMP':
 								return _elm_lang$core$Maybe$Just(
 									_user$project$Main$Cmp(
 										{
-											rs: _user$project$Main$reg_of_string(_p30._1._0),
-											rt: _user$project$Main$reg_of_string(_p30._1._1._0)
+											rs: _user$project$Main$reg_of_string(_p31._1._0),
+											rt: _user$project$Main$reg_of_string(_p31._1._1._0)
 										}));
 							default:
-								break _v28_16;
+								break _v29_16;
 						}
 					}
 				} else {
-					switch (_p30._0) {
+					switch (_p31._0) {
 						case 'BLT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Blt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'BEQ':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Beq(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'BGT':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Bgt(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'JMP':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jmp(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						case 'JSR':
 							return _elm_lang$core$Maybe$Just(
 								_user$project$Main$Jsr(
 									_elm_lang$core$Result$toMaybe(
-										_elm_lang$core$String$toInt(_p30._1._0))));
+										_elm_lang$core$String$toInt(_p31._1._0))));
 						default:
-							break _v28_16;
+							break _v29_16;
 					}
 				}
 			} else {
-				switch (_p30._0) {
+				switch (_p31._0) {
 					case 'R':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$R);
 					case 'HLT':
 						return _elm_lang$core$Maybe$Just(_user$project$Main$Hlt);
 					default:
-						break _v28_16;
+						break _v29_16;
 				}
 			}
 		} else {
-			break _v28_16;
+			break _v29_16;
 		}
 	} while(false);
 	return _elm_lang$core$Maybe$Nothing;
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p31 = msg;
-		switch (_p31.ctor) {
+		var _p32 = msg;
+		switch (_p32.ctor) {
 			case 'Step':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9381,7 +9400,7 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'Instructions':
-				var _p33 = _p31._0;
+				var _p33 = _p32._0;
 				var text = A2(
 					_elm_lang$core$List$map,
 					_user$project$Main$processCode,
@@ -9390,10 +9409,6 @@ var _user$project$Main$update = F2(
 						_user$project$Main$separate,
 						_elm_lang$core$String$lines(
 							_elm_lang$core$String$toUpper(_p33))));
-				var _p32 = A2(
-					_elm_lang$core$Debug$log,
-					_elm_lang$core$Basics$toString(text),
-					{ctor: '_Tuple0'});
 				var newImage = {text: text, data: model.image.data};
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9409,7 +9424,7 @@ var _user$project$Main$update = F2(
 					A2(
 						_elm_lang$core$List$map,
 						_elm_lang$core$String$toInt,
-						_user$project$Main$separate(_p31._0)));
+						_user$project$Main$separate(_p32._0)));
 				var newImage = {text: model.image.text, data: data};
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9431,7 +9446,12 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						_user$project$Main$initmodel,
-						{field: model.field, image: model.image, speed: model.speed}),
+						{
+							field: model.field,
+							image: {text: model.image.text, data: model.originalData},
+							speed: model.speed,
+							originalData: model.originalData
+						}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 			case 'UpdateTime':
@@ -9455,7 +9475,7 @@ var _user$project$Main$update = F2(
 								speed: A2(
 									_elm_lang$core$Result$withDefault,
 									1,
-									_elm_lang$core$String$toFloat(_p31._0))
+									_elm_lang$core$String$toFloat(_p32._0))
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					});
@@ -9467,16 +9487,25 @@ var _user$project$Main$update = F2(
 						{running: false, errorMsg: 'SVM Halt'}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
+			case 'Position':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{scrollTop: _p32._0}),
+					_elm_lang$core$Native_List.fromArray(
+						[]));
 			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{scrollTop: _p31._0}),
+						{originalData: model.image.data}),
 					_elm_lang$core$Native_List.fromArray(
 						[]));
 		}
 	});
+var _user$project$Main$Save = {ctor: 'Save'};
 var _user$project$Main$Position = function (a) {
 	return {ctor: 'Position', _0: a};
 };
@@ -9607,12 +9636,34 @@ var _user$project$Main$view = function (model) {
 										_elm_lang$html$Html$input,
 										_elm_lang$core$Native_List.fromArray(
 											[
-												_elm_lang$html$Html_Attributes$placeholder('e.g. 1, 1, 2, 3, 5...'),
+												_elm_lang$html$Html_Attributes$placeholder('Save when you finish typing '),
 												_elm_lang$html$Html_Events$onInput(_user$project$Main$RAM),
 												_elm_lang$html$Html_Attributes$class('RAM')
 											]),
 										_elm_lang$core$Native_List.fromArray(
-											[]))
+											[])),
+										A2(
+										_elm_lang$html$Html$button,
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html_Events$onClick(_user$project$Main$Save),
+												_elm_lang$html$Html_Attributes$class('buttonSave')
+											]),
+										_elm_lang$core$Native_List.fromArray(
+											[
+												_elm_lang$html$Html$text('Save')
+											])),
+										A2(
+										_elm_lang$html$Html$br,
+										_elm_lang$core$Native_List.fromArray(
+											[]),
+										_elm_lang$core$Native_List.fromArray(
+											[])),
+										_elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'Data: ',
+											_user$project$Main$showdata(model.image.data)))
 									])),
 								A2(
 								_elm_lang$html$Html$br,

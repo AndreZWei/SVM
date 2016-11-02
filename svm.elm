@@ -134,7 +134,7 @@ ramPut: a -> Int -> List a -> List a
 ramPut v n segment = 
     case n of 
         0 -> v::segment
-        _ -> List.append (List.take (n-1) segment) (v::(List.drop (n-1) segment))
+        _ -> List.append (List.take (n-1) segment) (v::(List.drop n segment))
 
 
 
@@ -154,11 +154,11 @@ main =
 
 --Model 
 
-type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String, finished: Bool, running: Bool, time: Time, speed: Float, scrollTop: Int}
+type alias Model = {registers: Registers, pc: Int, ra: Int, psw: Int, image: Image, field: String, error: Bool, errorMsg: String, finished: Bool, running: Bool, time: Time, speed: Float, scrollTop: Int, originalData: Datasegment}
 
 model: Model
 model =
-    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = "", finished = False, running = False, time = 0, speed = 1, scrollTop = 0}
+    {registers = {r0 = 0, r1 = 0, r2 = 0, r3 = 0}, pc = 0, ra = 0, psw = 0, image = {text = [], data = []}, field = "", error = False, errorMsg = "", finished = False, running = False, time = 0, speed = 1, scrollTop = 0, originalData = []}
 
 initmodel: Model
 initmodel = model
@@ -179,6 +179,7 @@ type Msg =
     | SetSpeed String
     | Stop
     | Position Int
+    | Save
 
 --A helper function for processing instructions
 
@@ -252,10 +253,11 @@ cycle model =
             case (rs, offset, rd) of 
                 (Just rs, Just offset, Just rd) ->
                     let 
-                        addr = offset + (registerGet rs registers)
+                        addr = offset + (registerGet rd registers)
                         value = registerGet rs registers
                         newData = ramPut value addr img.data
                         newImage = {text = img.text, data = newData}
+                        () = Debug.log (toString value)
                     in 
                         { model | pc = newpc, image = newImage}
                 _ -> { model | error = True, errorMsg = "There is something wrong with your Sto command in line " ++ (toString pc)}
@@ -388,7 +390,6 @@ update msg model =
         Instructions code ->
             let 
                 text = List.map processCode (List.map separate (String.lines (String.toUpper code)))
-                () = Debug.log (toString text) ()
                 newImage = {text = text, data = model.image.data}
             in 
                 {model | image = newImage, field = code} ! []
@@ -402,7 +403,7 @@ update msg model =
         
         Run ->  { model | running = True} ! []
 
-        Reset -> {initmodel | field = model.field, image = model.image, speed = model.speed} ! []
+        Reset -> {initmodel | field = model.field, image = {text = model.image.text, data = model.originalData}, speed = model.speed, originalData = model.originalData} ! []
 
         UpdateTime time -> if (model.running == True) then (cycle model, Cmd.none) else (model, Cmd.none)
 
@@ -412,8 +413,17 @@ update msg model =
 
         Position scrollTop -> { model | scrollTop = scrollTop } ! []
 
+        Save -> { model| originalData = model.image.data} ! []
+
 
 --View
+
+showdata: List Int -> String
+showdata data = 
+    case data of 
+        [] -> "\n"
+        x::xs -> (toString x) ++ " " ++ (showdata xs)  
+
 
 view: Model -> Html Msg
 view model =
@@ -422,7 +432,11 @@ view model =
       , section [ class "body"] 
       [ span [ class "left" ]
         [ span [ class "text"] [Html.text "Data Segment"]
-        , div [ id "RAM_data" ] [ input [placeholder "e.g. 1, 1, 2, 3, 5...", onInput RAM, class "RAM"] []]
+        , div [ id "RAM_data" ] 
+            [ input [placeholder "Save when you finish typing ", onInput RAM, class "RAM"] []
+            , button [onClick Save, class "buttonSave"] [Html.text "Save"]
+            , br [] []
+            , Html.text ("Data: " ++ (showdata model.image.data))]
         , br [] []
         , p [] [Html.text "Text Segment"]
         , createTextAreaWithLines model "input_instruction"
